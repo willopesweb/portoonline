@@ -1,0 +1,53 @@
+$component-name: c-button;
+
+$button-font-family: $font-family-1;
+
+:root {
+	--button-outline-color: var(--text-color-2);
+	--button-text-color: var(--text-color-2);
+	--button-background-color: var(--theme-color-3);
+	--button-hover-color: var(--theme-color-4);
+}
+
+@mixin c-button {
+	background-color: var(--button-background-color);
+	border: 0;
+	border-radius: 0;
+	color: var(--button-text-color);
+	cursor: pointer;
+	font-family: $button-font-family, sans-serif;
+	font-weight: 700;
+	padding: rem(10) rem(20);
+	text-transform: uppercase;
+	transition: 0.15s linear;
+	width: fit-content;
+	&:focus,
+	&:active,
+	&:hover {
+		background-color: var(--button-hover-color);
+		border: none;
+		box-shadow: none;
+	}
+}
+
+@mixin c-button--outline {
+	background-color: inherit;
+	border: 1px solid var(--button-outline-color);
+	color: var(--button-text-color);
+	padding: rem(7) rem(14);
+	&:hover,
+	&:focus,
+	&:active {
+		border: 1px solid darken($theme-color-1, 10%);
+		color: darken($theme-color-1, 10%);
+		outline: none;
+	}
+}
+
+.#{$component-name} {
+	@include c-button;
+}
+
+.#{$component-name}--outline {
+	@include c-button--outline;
+}

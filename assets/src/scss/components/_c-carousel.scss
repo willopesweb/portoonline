@@ -1,0 +1,48 @@
+$component-name: c-carousel;
+
+:root {
+	--point-color: var(--theme-color-1);
+	--point-active-color: var(--theme-color-3);
+}
+
+.#{$component-name} {
+	padding-bottom: $global-module-size * 2;
+	width: 100%;
+
+	.splide__arrows {
+		display: none;
+	}
+
+	.splide__list {
+		li {
+			padding: 0 rem(5);
+		}
+	}
+	.splide__pagination {
+		align-items: center;
+		bottom: rem(15);
+		display: flex !important;
+		justify-content: center;
+
+		&__page {
+			outline: 1px solid var(--point-color);
+
+			&.is-active {
+				background-color: var(--point-active-color);
+				outline: 1px solid var(--point-active-color);
+			}
+		}
+	}
+
+	&__item {
+		min-height: rem(200);
+		padding: $global-module-size / 2;
+
+		a {
+			align-items: center;
+			display: flex;
+			height: 100%;
+			justify-content: center;
+		}
+	}
+}

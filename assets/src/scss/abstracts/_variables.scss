@@ -1,0 +1,68 @@
+$theme-color-1: #ffb0b0;
+$theme-color-2: #0f0f0f;
+$theme-color-3: #fff7f7;
+$theme-color-4: #fcd2d2;
+
+$text-color-1: #0f0f0f;
+$text-color-2: #fff;
+$text-color-3: #7c7c7c;
+$text-color-4: #000;
+
+$color-close: #f45563;
+
+$font-family-1: "Montserrat", sans-serif;
+$font-family-2: "Montserrat", sans-serif;
+
+/*SOCIAL COLORS*/
+$color-facebook: #3c5a99;
+$color-twitter: #00aced;
+$color-instagram: #e4405f;
+$color-telegram: #08c;
+$color-linkedin: #007bb6;
+$color-whatsapp: #34af23;
+$color-rss: #f26522;
+
+$social-media-colors: (
+	"facebook": #3b5998,
+	"twitter": #00aced,
+	"linkedin": #0077b5,
+	"youtube": #cd201f,
+	"instagram": #e4405f,
+	"github": #333,
+	"telegram": #08c,
+	"whatsapp": #34af23,
+	"rss": #f26522,
+);
+
+@function social-media-color($social) {
+	@return map-get($social-media-colors, $social);
+}
+// ==========================================================================
+// Measures
+// ==========================================================================
+
+$global-max-width-raw: 1400;
+$global-max-width: rem($global-max-width-raw);
+$global-font-size: rem(18);
+$global-line-height: 1.5;
+$global-radius: rem(10);
+$global-border-radius: rem(7);
+$global-module-size: rem(20);
+
+// ==========================================================================
+// Transitions
+// ==========================================================================
+
+$transition-duration: 305ms;
+$transition-duration-complex: 385ms;
+$transition-duration-entrance: 235ms;
+$transition-duration-exit: 205ms;
+$transition-duration-fast: 150ms;
+
+$transition-function-ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+$transition-function-ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+$transition-function-ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+$transition-function-ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+$transition-function-ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+$transition-function-ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+$transition-function-elastic: cubic-bezier(0.175, 0.885, 0.41, 1.46);

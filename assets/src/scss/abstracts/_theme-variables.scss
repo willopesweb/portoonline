@@ -1,0 +1,89 @@
+/*! Theme Name: Porto Ferreira Online */
+
+:root {
+	--theme-color-1: #2377cb;
+	--theme-color-2: #6eaae6;
+	--theme-color-3: #f9690e;
+	--theme-color-4: #cf5305;
+	--theme-color-5: #f3f4f4;
+	--theme-color-6: #3d414b;
+	--theme-color-7: #32353d;
+	--theme-color-8: #289dcc;
+
+	--text-color-1: #232323;
+	--text-color-2: #fff;
+	--text-color-3: #888;
+	--text-color-4: #444;
+
+	--main-text-color: --text-color-1;
+	--body-background-color: --theme-color-3;
+	--logo-color: --theme-color-2;
+
+	--theme-default-transition: 0.15s linear;
+}
+
+$theme-color-1: #efc7ad;
+$theme-color-2: #0f0f0f;
+$theme-color-3: #fff2ea;
+$theme-color-4: #f9dfce;
+
+$text-color-1: #0f0f0f;
+$text-color-2: #fff;
+$text-color-3: #7c7c7c;
+$text-color-4: #000;
+
+$font-family-1: "Open Sans", sans-serif;
+$font-family-2: "Open Sans", sans-serif;
+
+body {
+	background-color: var(--body-background-color);
+	color: var(--main-text-color);
+	font-display: swap;
+	font-family: $font-family-1;
+}
+
+/*SOCIAL COLORS*/
+$social-media-colors: (
+	"facebook": #3b5998,
+	"twitter": #00aced,
+	"linkedin": #0077b5,
+	"youtube": #cd201f,
+	"instagram": #e4405f,
+	"github": #333,
+	"telegram": #08c,
+	"whatsapp": #34af23,
+	"rss": #f26522,
+);
+
+@function social-media-color($social) {
+	@return map-get($social-media-colors, $social);
+}
+// ==========================================================================
+// Measures
+// ==========================================================================
+
+$global-max-width-raw: 1200;
+$global-max-width: rem($global-max-width-raw);
+$global-font-size: rem(18);
+$global-line-height: 1.5;
+$global-radius: rem(10);
+$global-border-radius: rem(7);
+$global-module-size: rem(20);
+
+// ==========================================================================
+// Transitions
+// ==========================================================================
+
+$transition-duration: 305ms;
+$transition-duration-complex: 385ms;
+$transition-duration-entrance: 235ms;
+$transition-duration-exit: 205ms;
+$transition-duration-fast: 150ms;
+
+$transition-function-ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+$transition-function-ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+$transition-function-ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+$transition-function-ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+$transition-function-ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+$transition-function-ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+$transition-function-elastic: cubic-bezier(0.175, 0.885, 0.41, 1.46);

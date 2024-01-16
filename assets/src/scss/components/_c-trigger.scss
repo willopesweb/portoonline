@@ -1,0 +1,11 @@
+$component-name: c-trigger;
+
+.#{$component-name} {
+	background-color: var(--theme-color-1);
+	color: #fff;
+	height: fit-content;
+	margin-bottom: $global-module-size * 2;
+	padding: $global-module-size;
+	text-align: center;
+	width: 100%;
+}

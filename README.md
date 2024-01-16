@@ -1,5 +1,5 @@
 # Porto Ferreira Online
-Wordpress theme developed for the official Maplink Platform API documentation website.
+Wordpress theme developed for the local news website "Porto Ferreira Online"
 
 The result can be checked at:
 https://www.portoferreiraonline.com.br/

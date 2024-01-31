@@ -84,7 +84,6 @@ add_action('pre_get_posts', 'custom_posts_per_page');
 
 function adicionar_elipse($texto, $limite_caracteres = 60)
 {
-  header('Content-Type: text/html; charset=utf-8');
   if (mb_strlen($texto) > $limite_caracteres) {
     $texto = str_replace(array("<strong>", "</strong>"), '', mb_substr($texto, 0, $limite_caracteres, 'UTF-8')) . ' [...]';
   }
@@ -171,7 +170,7 @@ function theme_slides_template($custom)
   if ($custom['imagem_mobile']) {
     $html .= '<source media="(max-width:600px)" srcset="' . $custom["imagem_mobile"] . '">';
   };
-  $html .= '<img width="1500" height="415" loading="lazy" src="' . $custom["imagem"] . '" alt="' . $custom['titulo'] . '" />';
+  $html .= '<img width="1500" height="415" class="lazy" data-src="' . $custom["imagem"] . '" alt="' . $custom['titulo'] . '" />';
   $html .= '</picture>';
   $html .= '<h2 class="screen-readers-only">' . $custom['titulo'] . '</h2>';
   $html .= '</article>';

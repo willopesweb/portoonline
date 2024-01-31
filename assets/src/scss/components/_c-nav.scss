@@ -62,8 +62,12 @@ $component-name: c-nav;
 					pointer-events: none;
 
 					&::after {
-						content: "▼";
-						font-size: rem(8);
+						content: "";
+						border: solid #fff;
+						border-width: 0 2px 2px 0;
+						display: inline-block;
+						padding: 2px;
+						transform: rotate(45deg);
 						margin-left: rem(10);
 						transition: var(--theme-default-transition);
 					}

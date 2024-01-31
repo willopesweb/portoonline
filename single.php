@@ -77,12 +77,13 @@ get_header();
 				<a class="icon-whatsapp" href="whatsapp://send?text=<?= get_the_title() ?> - <?= get_permalink() ?>" target="_blank"></a>
 			</div>
 		</article>
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7379900084732959" crossorigin="anonymous"></script>
 		<!-- Ad Single Post -->
+		<!-- 		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7379900084732959" crossorigin="anonymous"></script>
+		
 		<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7379900084732959" data-ad-slot="2738902532" data-ad-format="auto" data-full-width-responsive="true"></ins>
 		<script>
 			(adsbygoogle = window.adsbygoogle || []).push({});
-		</script>
+		</script> -->
 		<div class="l-page__comments">
 			<?php
 			if (comments_open()) {

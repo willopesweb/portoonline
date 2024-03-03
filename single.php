@@ -2,7 +2,7 @@
 get_header();
 ?>
 
-<div class="l-page__main">
+<div class="l-page__main" style="padding-top:40px">
 	<main id="content">
 		<article class="l-page__single">
 			<?php
@@ -30,7 +30,7 @@ get_header();
 			$html .= '<div class="c-post">';
 			if ($post_info['imagem']) {
 				$html .= '<div class="c-post__image">';
-				$html .= '<img loading="lazy" width="1000" height="590" src="' . $post_info['imagem'] . '" alt="' . $post_info['titulo'] . '" />';
+				$html .= '<img class="lazy" width="600" height="590" data-src="' . $post_info['imagem'] . '" alt="' . $post_info['titulo'] . '" />';
 				$html .= '</div>';
 			};
 			$html .= '<header class="c-post__header">';
@@ -71,8 +71,8 @@ get_header();
 				$permalink = rtrim($permalink, '/')
 				?>
 				<a class="icon-facebook" href="#" onclick="shareOnSocial('https://www.facebook.com/sharer.php?t=<?= get_the_title() ?>&amp;u=<?= $permalink ?>', 'Compartilhar no Facebook'); return false;"></a>
-				<a class="icon-twitter" data-show-count="false" href="#" onclick="shareOnSocial('https://twitter.com/share?ref_src=<?= $permalink ?>&amp;text=<?= get_the_title() ?>', 'Compartilhar no Twitter'); return false;"></a>
-				<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+				<a class="icon-twitter" data-show-count="false" href="https://twitter.com/share?ref_src=<?php echo urlencode(get_permalink()); ?>&amp;text=<?php echo urlencode(get_the_title()); ?>&amp;url=<?php echo urlencode(get_permalink()); ?>" onclick="shareOnSocial(this.href, 'Compartilhar no Twitter'); return false;"></a>
+				<!-- <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
 				<a class="icon-linkedin" href="#" onclick="shareOnSocial('https://www.linkedin.com/shareArticle?url=<?= $permalink ?>&amp;title=<?= get_the_title() ?>', 'Compartilhar no LinkedIn'); return false;"></a>
 				<a class="icon-whatsapp" href="whatsapp://send?text=<?= get_the_title() ?> - <?= get_permalink() ?>" target="_blank"></a>
 			</div>

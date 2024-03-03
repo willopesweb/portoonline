@@ -81,15 +81,16 @@ function custom_posts_per_page($query)
 }
 add_action('pre_get_posts', 'custom_posts_per_page');
 
-
-function adicionar_elipse($texto, $limite_caracteres = 60)
+//Resume títulos dos posts adicionando os caracteres [...]
+function resume_text($text, $limitCharacters = 60)
 {
-  if (mb_strlen($texto) > $limite_caracteres) {
-    $texto = str_replace(array("<strong>", "</strong>"), '', mb_substr($texto, 0, $limite_caracteres, 'UTF-8')) . ' [...]';
+  if (mb_strlen($text) > $limitCharacters) {
+    $text = str_replace(array("<strong>", "</strong>"), '', mb_substr($text, 0, $limitCharacters, 'UTF-8')) . ' [...]';
   }
-  return $texto;
+  return $text;
 }
 
+//Retorna os posts conforme os argumentos fornecidos
 function theme_get_posts($args)
 {
   if (!$args) return;
@@ -109,7 +110,7 @@ function theme_get_posts($args)
       }
 
       $post = array(
-        'titulo' => adicionar_elipse(get_the_title(), 80),
+        'titulo' => resume_text(get_the_title(), 80),
         'imagem' => get_the_post_thumbnail_url(),
         'data' => get_the_date(),
         'descricao' => get_the_excerpt(),
@@ -126,6 +127,7 @@ function theme_get_posts($args)
   wp_reset_postdata();
 }
 
+//Template para os posts
 function theme_post_template($post)
 {
   $html = '<article class="c-post">';
@@ -160,6 +162,38 @@ function theme_post_template($post)
   return $html;
 }
 
+//Retorna os slides conforme os argumentos fornecidos
+function theme_get_slides($args)
+{
+  if (!$args) return;
+
+  $query = new WP_Query($args);
+  if ($query->have_posts()) {
+    // Verifica se é a página inicial
+    $is_home = is_front_page();
+
+    // Adiciona a classe is-home se estiver na página inicial
+    $carousel_class = $is_home ? 'c-carousel is-home' : 'c-carousel';
+
+    echo '<div class="l-page__content ' . $carousel_class . ' js-main-carousel splide">';
+    echo '<div class="splide__track"><ul class="splide__list">';
+    while ($query->have_posts()) {
+      $query->the_post();
+      $custom = array(
+        'titulo' => get_the_title(),
+        'imagem' => get_field("imagem"),
+        'imagem_mobile' => get_field("imagem_mobile"),
+        'link' => get_field("link"),
+      );
+      echo theme_slides_template($custom);
+    }
+    echo '</ul></div>';
+    echo '</div>';
+    wp_reset_postdata();
+  }
+}
+
+//Template para os slides
 function theme_slides_template($custom)
 {
   $html = '<li class="splide__slide"><article class="l-slide">';
@@ -182,7 +216,28 @@ function theme_slides_template($custom)
   return $html;
 }
 
-function theme_banners_archive($custom)
+//Template para os banners
+function theme_banner_template($custom)
+{
+  $html = "";
+  if ($custom["link"]) {
+    $html .= '<a target="_blank" rel="nofollow" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-banner">';
+  } else {
+    $html .= '<article class="l-banner">';
+    $html .= '<h3 class="screen-readers-only">' . $custom['titulo'] . '</h3>';
+  }
+
+  $html .= '<img class="lazy" width="380" height="380" data-src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '"/>';
+
+  if ($custom["link"]) {
+    $html .= '</a>';
+  } else {
+    $html .= '</article>';
+  }
+  return $html;
+}
+
+/* function theme_banners_archive($custom)
 {
   $html = "";
 
@@ -207,4 +262,4 @@ function theme_banners_archive($custom)
   }
 
   return $html;
-}
+} */

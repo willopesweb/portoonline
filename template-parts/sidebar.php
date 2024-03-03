@@ -29,11 +29,13 @@
     if (has_category('vagas-de-empregos')) {
       echo banners_vagas_shortcode();
     } else if ((strpos($_SERVER['REQUEST_URI'], 'obituario') !== false) || (is_single() && has_category('obituario-porto-ferreira'))) {
-      echo banners_shortcode(true, false);
+      echo banners_obituario_shortcode();
     } else if ((strpos($_SERVER['REQUEST_URI'], 'eventos') !== false) || (is_single() && has_category('eventos'))) {
-      echo banners_shortcode(false, true);
+      echo banners_eventos_shortcode();
+    } else if ((strpos($_SERVER['REQUEST_URI'], 'saude') !== false) || (is_single() && has_category('saude'))) {
+      echo banners_saude_shortcode();
     } else {
-      echo banners_shortcode(false, false);
+      echo banners_shortcode();
     }
     ?>
   </div>

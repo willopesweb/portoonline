@@ -51,7 +51,7 @@ global $wp_query;
 						}
 					}
 					$post = array(
-						'titulo' => adicionar_elipse(get_the_title(), 80),
+						'titulo' => resume_text(get_the_title(), 80),
 						'imagem' => get_the_post_thumbnail_url(),
 						'data' => get_the_date(),
 						'descricao' => get_the_excerpt(),

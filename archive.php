@@ -6,28 +6,25 @@ global $wp_query;
 // Banners exibidos entre o conteudo da página no Mobile
 $banners = array();
 
+if (has_category('vagas-de-empregos')) {
+	$post_type = "banners_vagas";
+} else if ((strpos($_SERVER['REQUEST_URI'], 'obituario') !== false) || (is_single() && has_category('obituario-porto-ferreira'))) {
+	$post_type = "banners_obituario";
+} else if ((strpos($_SERVER['REQUEST_URI'], 'eventos') !== false) || (is_single() && has_category('eventos'))) {
+	$post_type = "banners_eventos";
+} else if ((strpos($_SERVER['REQUEST_URI'], 'saude') !== false) || (is_single() && has_category('saude'))) {
+	$post_type = "banners_saude";
+} else {
+	$post_type = "banners";
+}
+
 $banner_query = new WP_Query(array(
-	'post_type' => 'banners',
+	'post_type' => $post_type,
 	'post_status' => 'publish',
 	'posts_per_page' => -1,
-	'meta_query' => array(
-		'relation' => 'AND', // Garante que ambas as condições sejam atendidas
-		array(
-			'key' => 'obituario',
-			'value' => (strpos($_SERVER['REQUEST_URI'], 'obituario') !== false) ? '1' : '0',
-			'compare' => '='
-		),
-		array(
-			'key' => 'eventos',
-			'value' => (strpos($_SERVER['REQUEST_URI'], 'eventos') !== false) ? '1' : '0',
-			'compare' => '='
-		),
-		array(
-			'key' => 'ativo',
-			'value' => '1',
-			'compare' => '='
-		)
-	)
+	'meta_key' => 'ativo',
+	'meta_value' => '0',
+	'meta_compare' => '!=',
 ));
 
 if ($banner_query->have_posts()) {
@@ -36,12 +33,22 @@ if ($banner_query->have_posts()) {
 		$custom = array(
 			'titulo' => get_the_title(),
 			'imagem' => get_field("imagem"),
-			'imagem_mobile' => get_field("imagem_mobile"),
 			'link' => get_field("link"),
+			'exibir_ate' => get_field("exibir_ate"),
 		);
-		array_push($banners, $custom);
+
+		if (!$custom["exibir_ate"]) {
+			array_push($banners, $custom);
+		}
+
+		$custom_date_string = $custom["exibir_ate"];
+		$custom_date = DateTime::createFromFormat('d/m/Y', $custom_date_string);
+
+		if ($custom_date && $custom_date >= new DateTime()) {
+			array_push($banners, $custom);
+		}
 	}
-	wp_reset_postdata(); // Restaurar os dados originais do post global do WordPress
+	wp_reset_postdata();
 }
 ?>
 
@@ -53,63 +60,14 @@ if ($banner_query->have_posts()) {
 	</header>
 
 	<?php
-	// Slide com Banners
+
+	// Slides (Banners Rotativos)
 	if (strpos($_SERVER['REQUEST_URI'], 'obituario') !== false) {
-		$banner_query = new WP_Query(array(
-			'post_type' => 'banners_obituario',
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-			'orderby' => 'rand',
-			'meta_key' => 'ativo',     // Adiciona a chave do campo personalizado
-			'meta_value' => '0',           // Define o valor para buscar (true)
-			'meta_compare' => '!=',
-		));
-
-		if ($banner_query->have_posts()) {
-			echo '<div class="l-page__content c-carousel js-main-carousel splide">';
-			echo '<div class="splide__track"><ul class="splide__list">';
-			while ($banner_query->have_posts()) {
-				$banner_query->the_post();
-				$custom = array(
-					'titulo' => get_the_title(),
-					'imagem' => get_field("imagem"),
-					'imagem_mobile' => get_field("imagem_mobile"),
-					'link' => get_field("link"),
-				);
-				echo theme_slides_template($custom);
-			}
-			echo '</ul></div>';
-			echo '</div>';
-			wp_reset_postdata(); // Restaurar os dados originais do post global do WordPress
-		}
+		echo slides_obituario_shortcode();
 	} else if (strpos($_SERVER['REQUEST_URI'], 'eventos') !== false) {
-		$banner_query = new WP_Query(array(
-			'post_type' => 'banners_eventos',
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-			'orderby' => 'rand',
-			'meta_key' => 'ativo',     // Adiciona a chave do campo personalizado
-			'meta_value' => '0',           // Define o valor para buscar (true)
-			'meta_compare' => '!=',
-		));
-
-		if ($banner_query->have_posts()) {
-			echo '<div class="l-page__content c-carousel js-main-carousel splide">';
-			echo '<div class="splide__track"><ul class="splide__list">';
-			while ($banner_query->have_posts()) {
-				$banner_query->the_post();
-				$custom = array(
-					'titulo' => get_the_title(),
-					'imagem' => get_field("imagem"),
-					'imagem_mobile' => get_field("imagem_mobile"),
-					'link' => get_field("link"),
-				);
-				echo theme_slides_template($custom);
-			}
-			echo '</ul></div>';
-			echo '</div>';
-			wp_reset_postdata(); // Restaurar os dados originais do post global do WordPress
-		}
+		echo slides_eventos_shortcode();
+	} else if (strpos($_SERVER['REQUEST_URI'], 'saude') !== false) {
+		echo slides_saude_shortcode();
 	}
 	?>
 </div>
@@ -134,7 +92,7 @@ if ($banner_query->have_posts()) {
 					$parent_category_id = $categories[0]->term_id;
 				}
 				$post = array(
-					'titulo' => adicionar_elipse(get_the_title(), 80),
+					'titulo' => resume_text(get_the_title(), 80),
 					'imagem' => get_the_post_thumbnail_url(),
 					'data' => get_the_date(),
 					'descricao' => get_the_excerpt(),
@@ -147,9 +105,8 @@ if ($banner_query->have_posts()) {
 				echo theme_post_template($post);
 
 				if ($post_counter % 2 == 0) {
-					// Exibir o post do tipo "Banner" aqui
 					if (isset($banners[$banner_counter])) {
-						echo banners_html($banners[$banner_counter]);
+						echo theme_banner_template($banners[$banner_counter]);
 						$banner_counter++;
 					}
 				}

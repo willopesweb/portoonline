@@ -56,19 +56,19 @@ $component-name: c-nav;
 			&.menu-item-has-children {
 				transition: var(--theme-default-transition);
 
-				&>a {
+				& > a {
 					cursor: pointer;
 					height: min-content;
 					pointer-events: none;
 
 					&::after {
-						content: "";
 						border: solid #fff;
 						border-width: 0 2px 2px 0;
+						content: "";
 						display: inline-block;
+						margin-left: rem(10);
 						padding: 2px;
 						transform: rotate(45deg);
-						margin-left: rem(10);
 						transition: var(--theme-default-transition);
 					}
 				}
@@ -76,7 +76,7 @@ $component-name: c-nav;
 				&.is-submenu-open {
 					background-color: var(--theme-color-1);
 
-					&>a::after {
+					& > a::after {
 						transform: rotate(-90deg);
 					}
 
@@ -145,10 +145,15 @@ $component-name: c-nav;
 				&.menu-item-has-children {
 					position: relative;
 
-					&>a::after {
-						content: "▼";
-						font-size: rem(8);
+					& > a::after {
+						border: solid #fff;
+						border-width: 0 2px 2px 0;
+						content: "";
+						display: inline-block;
 						margin-left: rem(10);
+						padding: 2px;
+						transform: rotate(45deg);
+						transition: var(--theme-default-transition);
 					}
 				}
 

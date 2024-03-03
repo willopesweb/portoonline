@@ -6,8 +6,14 @@ $component-name: c-carousel;
 }
 
 .#{$component-name} {
+	height: rem(250);
 	padding-bottom: $global-module-size * 2;
 	width: 100%;
+
+	&.is-home {
+		height: fit-content;
+		padding-top: $global-module-size;
+	}
 
 	.splide__arrows {
 		display: none;
@@ -18,6 +24,7 @@ $component-name: c-carousel;
 			padding: 0 rem(5);
 		}
 	}
+
 	.splide__pagination {
 		align-items: center;
 		bottom: rem(15);

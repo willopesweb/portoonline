@@ -2,6 +2,7 @@
 
 get_header();
 
+// Evita que categorias de produtos e serviços apareçam como notícias
 $exclude_categories = array();
 $produtos_category = get_category_by_slug('produtos-servicos');
 if ($produtos_category) {
@@ -11,6 +12,41 @@ if ($produtos_category) {
 	foreach ($subcategories as $subcategory) {
 		$exclude_categories[] = $subcategory->term_id;
 	}
+}
+
+// Banners exibidos entre o conteudo da página no Mobile
+$banners = array();
+$banner_query = new WP_Query(array(
+	'post_type' => 'banners',
+	'post_status' => 'publish',
+	'posts_per_page' => -1,
+	'meta_key' => 'ativo',
+	'meta_value' => '0',
+	'meta_compare' => '!=',
+));
+
+if ($banner_query->have_posts()) {
+	while ($banner_query->have_posts()) {
+		$banner_query->the_post();
+		$custom = array(
+			'titulo' => get_the_title(),
+			'imagem' => get_field("imagem"),
+			'link' => get_field("link"),
+			'exibir_ate' => get_field("exibir_ate"),
+		);
+
+		if (!$custom["exibir_ate"]) {
+			array_push($banners, $custom);
+		}
+
+		$custom_date_string = $custom["exibir_ate"];
+		$custom_date = DateTime::createFromFormat('d/m/Y', $custom_date_string);
+
+		if ($custom_date && $custom_date >= new DateTime()) {
+			array_push($banners, $custom);
+		}
+	}
+	wp_reset_postdata();
 }
 ?>
 <section class="l-page">
@@ -127,6 +163,16 @@ if ($produtos_category) {
 		</section>
 
 		<?php
+		//Banners mobile
+		if (count($banners) > 0) {
+			echo '<div class="l-page-home__banners-mobile">';
+			echo theme_banner_template($banners[0]);
+			echo theme_banner_template($banners[1]);
+			echo "</div>";
+		}
+		?>
+
+		<?php
 		$args = array(
 			'post_type' => 'banners_home',
 			'post_status' => 'publish',
@@ -185,6 +231,16 @@ if ($produtos_category) {
 				<a href="<?= get_site_url() ?>/categoria/obituario-porto-ferreira/" class="c-button">Ver Mais</a>
 			</footer>
 		</section>
+
+		<?php
+		//Banners mobile
+		if (count($banners) > 0) {
+			echo '<div class="l-page-home__banners-mobile">';
+			echo theme_banner_template($banners[2]);
+			echo theme_banner_template($banners[3]);
+			echo "</div>";
+		}
+		?>
 
 		<?php
 		$args = array(
@@ -248,6 +304,16 @@ if ($produtos_category) {
 			</footer>
 		</section>
 
+		<?php
+		//Banners mobile
+		if (count($banners) > 0) {
+			echo '<div class="l-page-home__banners-mobile">';
+			echo theme_banner_template($banners[4]);
+			echo theme_banner_template($banners[5]);
+			echo "</div>";
+		}
+		?>
+
 		<section class="l-posts">
 			<header class="l-posts__header">
 				<h2 class="l-posts__title">Porto Ferreira</h2>
@@ -269,6 +335,20 @@ if ($produtos_category) {
 				<a href="<?= get_site_url() ?>/categoria/noticias/porto-ferreira/" class="c-button">Ver Mais</a>
 			</footer>
 		</section>
+
+		<?php
+		//Banners mobile
+		if (count($banners) > 0) {
+			echo '<div class="l-page-home__banners-mobile">';
+			echo theme_banner_template($banners[6]);
+			echo theme_banner_template($banners[7]);
+			echo "</div>";
+			echo '<div class="l-page-home__banners-mobile">';
+			echo theme_banner_template($banners[8]);
+			echo theme_banner_template($banners[9]);
+			echo "</div>";
+		}
+		?>
 
 		<?php
 		$args = array(

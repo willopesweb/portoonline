@@ -44,6 +44,23 @@ $layout-name: l-page-home;
 		}
 	}
 
+	&__banners-mobile {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		gap: $global-module-size;
+		justify-content: center;
+		padding-bottom: $global-module-size;
+
+		@include breakpoint(600) {
+			flex-direction: row;
+		}
+
+		@include breakpoint(1200) {
+			display: none;
+		}
+	}
+
 	&__recents {
 		display: none;
 

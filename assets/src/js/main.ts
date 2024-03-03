@@ -1,6 +1,7 @@
 import "../scss/style.scss";
 import "./lazyload";
 import "./slides";
+import "fslightbox";
 
 const mobileButton: HTMLElement | null =
   document.getElementById("mobileButton");

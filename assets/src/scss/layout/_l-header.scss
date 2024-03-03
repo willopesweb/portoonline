@@ -142,10 +142,13 @@ $layout-name: l-header;
 	}
 
 	&__slide {
-
-		/* height: rem(100); */
+		display: none;
 		padding: 0;
 		width: 100%;
+
+		@include breakpoint(700) {
+			display: flex;
+		}
 
 		.splide__track {
 			height: 100%;

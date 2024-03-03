@@ -17,10 +17,10 @@ function theme_custom_login_logo()
 {
   echo '<style type="text/css">
   :root{
-    --login-background-color: #0f274d;
+    --login-background-color: #f3f4f4;
     --login-font-family: "Poppins", sans-serif;
-    --button-background-color:#ff5400;
-    --button-hover-color: #ef3b3e;
+    --button-background-color:#f9690e;
+    --button-hover-color: #cf5305;
     --button-font-color: #f1f1f1;
   }
 

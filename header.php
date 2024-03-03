@@ -9,6 +9,11 @@
   <meta property="og:description" content="<?php echo get_the_excerpt(); ?>" />
   <meta property="og:image" content="<?php echo wp_get_attachment_url(get_post_thumbnail_id($post->ID), 'full'); ?>" />
   <meta property="og:url" content="<?php echo get_permalink(); ?>" />
+  <?php
+  if (has_post_thumbnail()) {
+    echo '<meta name="twitter:image" content="' . get_the_post_thumbnail_url() . '" />';
+  }
+  ?>
   <?php if (is_archive()) {
     echo '<title>' . str_replace('</span>', '', str_replace('Categoria: <span>', '', get_the_archive_title())) . ' - Porto Ferreira Online</title>';
   } else { ?>
@@ -37,54 +42,7 @@
       </a>
 
       <?php
-      $args = array(
-        'post_type' => 'banners_topo',
-        'post_status' => 'publish',
-        'posts_per_page' => -1,
-        'orderby' => 'rand',
-        'meta_key' => 'ativo',     // Adiciona a chave do campo personalizado
-        'meta_value' => '0',           // Define o valor para buscar (true)
-        'meta_compare' => '!=',
-      );
-
-      $query = new WP_Query($args);
-      if ($query->have_posts()) {
-        echo '<div class="l-header__slide c-carousel js-header-carousel splide">';
-        echo '<div class="splide__track"><ul class="splide__list">';
-        while ($query->have_posts()) {
-          $query->the_post();
-          $custom = array(
-            'titulo' => get_the_title(),
-            'imagem' => get_field("imagem"),
-            'imagem_mobile' => get_field("imagem_mobile"),
-            'link' => get_field("link"),
-          );
-          echo '<li class="splide__slide">';
-          if ($custom["link"]) {
-            echo '<a target="_blank" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-header__banner">';
-          } else {
-            echo '<div class="l-header__banner">';
-          }
-
-          echo '<picture>';
-          if ($custom['imagem_mobile']) {
-            echo '<source media="(max-width:600px)" srcset="' . $custom["imagem_mobile"] . '">';
-          };
-          echo '<img loading="lazy" width="1000" height="100" src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '"/>';
-          echo '</picture>';
-
-
-          if ($custom["link"]) {
-            echo '</a>';
-          } else {
-            echo '</div>';
-          }
-          echo '</li>';
-        }
-        echo '</ul></div>';
-        echo '</div>';
-      }
-      wp_reset_postdata();
+      echo slides_topo_shortcode();
       ?>
       <nav class="l-header__topmenu">
         <?php
@@ -146,13 +104,7 @@
   </nav>
 
   <?php
-
   if (is_front_page()) {
-    echo '<div class="l-page__content c-carousel js-main-carousel splide" style="padding-top:20px">';
-    echo '<div class="splide__track"><ul class="splide__list">';
-    echo slides_shortcode();
-    echo '</ul></div>';
-    echo '</div>';
+    echo slides_home_shortcode();
   }
-
   ?>

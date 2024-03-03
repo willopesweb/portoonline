@@ -6,8 +6,8 @@ $layout-name: l-sidebar;
 	}
 
 	.c-post {
-		max-width: rem(320);
 		margin: 0 auto;
+		max-width: rem(320);
 
 		@include breakpoint(500) {
 			max-width: none;
@@ -27,8 +27,8 @@ $layout-name: l-sidebar;
 
 	.l-banner {
 		display: flex;
-		width: 100%;
 		max-width: rem(300);
+		width: 100%;
 
 		@include breakpoint(600) {
 			max-width: none;
@@ -42,9 +42,9 @@ $layout-name: l-sidebar;
 
 	&__banners {
 		display: grid;
-		place-items: center;
 		gap: $global-module-size;
 		margin-bottom: $global-module-size * 2;
+		place-items: center;
 
 		@include breakpoint(800) {
 			padding-bottom: $global-module-size * 4;

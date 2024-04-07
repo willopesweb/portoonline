@@ -16,18 +16,19 @@ const BUILD_DIR = path.resolve(__dirname, "assets/public");
 
 const entry = {
   main: JS_DIR + "/main.ts",
-  //single: JS_DIR + '/single.js',
+  slides: JS_DIR + "/slides.ts",
+  gallery: JS_DIR + "/gallery.ts",
 };
 
 const output = {
   path: BUILD_DIR,
-  filename: "js/[name].js",
+  filename: "js/[name].js", // Output nome baseado no nome do entry
 };
 
 const rules = [
   {
     test: /\.ts$/,
-    include: [JS_DIR],
+    include: [path.resolve(__dirname, "assets/src/js")],
     exclude: /node_modules/,
     use: "ts-loader",
   },
@@ -38,7 +39,7 @@ const rules = [
     use: "babel-loader",
   },
   {
-    test: /.s?css$/,
+    test: /\.s?css$/,
     use: [
       MiniCssExtractPlugin.loader,
       "css-loader",
@@ -65,8 +66,6 @@ const rules = [
 
 const plugins = (argv) => [
   new CleanWebpackPlugin({
-    // Automatically remove all unused webpack asstes on rebuil
-    // false in development, true in production
     cleanStaleWebpackAssets: argv.mode === "production",
   }),
 
@@ -86,8 +85,6 @@ const plugins = (argv) => [
     minimizer: {
       implementation: ImageMinimizerPlugin.imageminMinify,
       options: {
-        // Lossless optimization with custom option
-        // Feel free to experiment with options for better result for you
         plugins: [
           ["gifsicle", { interlaced: true }],
           ["jpegtran", { progressive: true }],
@@ -118,8 +115,6 @@ const plugins = (argv) => [
   }),
 
   new BrowserSyncPlugin({
-    //host: 'localhost', // browse to http://localhost:3000/ during development, ./public directory is being served
-    //server: { baseDir: ['public'] },
     port: 3000,
     proxy: PROXY_URL,
     files: ["./*php", "./**/*.php"],
@@ -130,7 +125,6 @@ const plugins = (argv) => [
 module.exports = (env, argv) => ({
   entry: entry,
   output: output,
-  //devtool: 'source-map',
   resolve: {
     extensions: [".ts", ".js"],
   },

@@ -2,17 +2,19 @@
 
 get_header();
 
+
 // Evita que categorias de produtos e serviços apareçam como notícias
-$exclude_categories = array();
+/* $exclude_categories = array();
 $produtos_category = get_category_by_slug('produtos-servicos');
 if ($produtos_category) {
 	$exclude_categories[] = $produtos_category->term_id;
 
+
 	$subcategories = get_categories(array('parent' => $produtos_category->term_id));
 	foreach ($subcategories as $subcategory) {
-		$exclude_categories[] = $subcategory->term_id;
+		$exclude_categories[] = $subcategory->name;
 	}
-}
+} */
 
 // Banners exibidos entre o conteudo da página no Mobile
 $banners = array();
@@ -59,7 +61,7 @@ if ($banner_query->have_posts()) {
 						'post_type' => 'post',
 						'post_status' => 'publish',
 						'posts_per_page' => 4,
-						'category__not_in' => $exclude_categories,
+						//'category__not_in' => $exclude_categories,
 						'order' => 'DESC',
 					);
 					$html = '';
@@ -132,7 +134,7 @@ if ($banner_query->have_posts()) {
 				'post_status' => 'publish',
 				'posts_per_page' => 4,
 				'order' => 'DESC',
-				'category__not_in' => $exclude_categories,
+				//'category__not_in' => $exclude_categories,
 			);
 			theme_get_posts($args);
 			?>
@@ -397,32 +399,34 @@ if ($banner_query->have_posts()) {
 			(adsbygoogle = window.adsbygoogle || []).push({});
 		</script>
 
-		<section class="l-page-home__posts-links">
-			<h2 class="l-page-home__title">Geral</h2>
-			<?php
-			$args = array(
-				'post_type' => 'post',
-				'post_status' => 'publish',
-				'posts_per_page' => 6,
-				'order' => 'DESC',
-				'category_name' => "geral"
-			);
-			$query = new WP_Query($args);
-			if ($query->have_posts()) {
-				$i = 1;
-				while ($query->have_posts()) {
-					$query->the_post();
-					$post = array(
-						'titulo' => get_the_title(),
-						'link' => get_permalink(),
-					);
 
-					echo '<a href="' . $post["link"] . '" title="' . $post["titulo"] . '"><h3>' . $post["titulo"] . '</h3></a>';
-				}
+		<?php
+		/* 		echo '<section class="l-page-home__posts-links">';
+		echo '<h2 class="l-page-home__title">Geral</h2>';
+		$args = array(
+			'post_type' => 'post',
+			'post_status' => 'publish',
+			'posts_per_page' => 6,
+			'order' => 'DESC',
+			'category_name' => "geral"
+		);
+		$query = new WP_Query($args);
+		if ($query->have_posts()) {
+			$i = 1;
+			while ($query->have_posts()) {
+				$query->the_post();
+				$post = array(
+					'titulo' => get_the_title(),
+					'link' => get_permalink(),
+				);
+
+				echo '<a href="' . $post["link"] . '" title="' . $post["titulo"] . '"><h3>' . $post["titulo"] . '</h3></a>';
 			}
-			wp_reset_postdata();
-			?>
-		</section>
+		}
+		wp_reset_postdata();
+		echo '</section>'; */
+		?>
+
 
 		<div class="l-page-home__posts-two-columns">
 			<div class="l-posts">

@@ -19,6 +19,7 @@ img.lazy {
 	0% {
 		background-position: 0% 50%;
 	}
+
 	100% {
 		background-position: 100% 50%;
 	}
@@ -60,6 +61,14 @@ Active from screen readers, but hidden from tab navigators
 .adsbygoogle {
 	margin-bottom: rem(40);
 	text-align: center;
+}
+
+.su-expand-link-more {
+	display: none !important;
+}
+
+.su-expand-link-less {
+	display: block !important;
 }
 
 /*Debug CSS*/

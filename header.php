@@ -7,7 +7,6 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta property="og:title" content="<?php the_title(); ?>" />
   <meta property="og:description" content="<?php echo get_the_excerpt(); ?>" />
-  <meta property="og:image" content="<?php echo wp_get_attachment_url(get_post_thumbnail_id($post->ID), 'full'); ?>" />
   <meta property="og:url" content="<?php echo get_permalink(); ?>" />
   <?php
   if (has_post_thumbnail()) {
@@ -24,6 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
   <?php
 
   wp_head();

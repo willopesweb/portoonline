@@ -1,4 +1,3 @@
-
 <?php
 function register_cpt_banners_obituario()
 {

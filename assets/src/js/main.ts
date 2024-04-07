@@ -1,7 +1,8 @@
 import "../scss/style.scss";
+import "@splidejs/splide/css/core";
+import "@splidejs/splide/css";
+
 import "./lazyload";
-import "./slides";
-import "fslightbox";
 
 const mobileButton: HTMLElement | null =
   document.getElementById("mobileButton");

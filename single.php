@@ -1,7 +1,7 @@
 <?php
 get_header();
 ?>
-
+<script defer src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/js/gallery.js"></script>
 <div class="l-page__main" style="padding-top:40px">
 	<main id="content">
 		<article class="l-page__single">

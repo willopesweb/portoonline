@@ -42,7 +42,6 @@ function videos_shortcode()
   );
   $query = new WP_Query($args);
   if ($query->have_posts()) {
-    $i = 1;
     while ($query->have_posts()) {
       $query->the_post();
       $custom = array(
@@ -53,7 +52,7 @@ function videos_shortcode()
       echo '<section class="l-page-home__video">';
       echo '<h2 class="l-page-home__title">' . $custom['titulo'] . '</h2>';
       echo '<div class="l-page-home__video-content">';
-      echo $custom['video'];
+      echo '<div class="l-page-home__video-iframe" data-video-id="' . $custom['video'] . '"></div>';
       echo '</div>';
       echo '</section>';
     }

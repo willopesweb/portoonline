@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (entry.isIntersecting) {
           const image = entry.target as HTMLImageElement;
           image.src = image.dataset.src!;
-          //image.classList.remove("lazy");
           imageObserver.unobserve(image);
         }
       });
@@ -49,4 +48,21 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("resize", lazyload);
     window.addEventListener("orientationchange", lazyload);
   }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const videoContainers = document.querySelectorAll(
+    ".l-page-home__video-iframe"
+  );
+  if (!videoContainers || videoContainers.length === 0) return;
+  videoContainers.forEach((container: Element) => {
+    const videoId = container.getAttribute("data-video-id");
+    if (videoId) {
+      const iframe = document.createElement("iframe");
+      iframe.setAttribute("src", `https://www.youtube.com/embed/${videoId}`);
+      iframe.setAttribute("frameborder", "0");
+      iframe.setAttribute("allowfullscreen", "");
+      container.appendChild(iframe);
+    }
+  });
 });

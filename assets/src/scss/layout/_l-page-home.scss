@@ -115,20 +115,9 @@ $layout-name: l-page-home;
 		padding-bottom: $global-module-size;
 	}
 
-	&__posts-links {
+	/* 	&__posts-links {
 		display: grid;
 		margin-bottom: $global-module-size * 2;
-
-		/* @include breakpoint(600) {
-      grid-template-columns: 1fr 1fr 1fr;
-    } */
-
-		.l-page-home__title {
-
-			/*  @include breakpoint(600) {
-        grid-column: 1 / 3;
-      } */
-		}
 
 		a {
 			color: var(--theme-color-1);
@@ -146,7 +135,7 @@ $layout-name: l-page-home;
 				line-height: rem(25);
 			}
 		}
-	}
+	} */
 
 	&__banner {
 		align-items: center;

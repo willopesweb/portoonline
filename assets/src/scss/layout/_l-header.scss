@@ -148,6 +148,7 @@ $layout-name: l-header;
 
 		@include breakpoint(700) {
 			display: flex;
+			max-height: rem(100);
 		}
 
 		.splide__track {

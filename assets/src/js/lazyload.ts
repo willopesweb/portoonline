@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if ("IntersectionObserver" in window && typeof document !== "undefined") {
     lazyloadImages = document.querySelectorAll(".lazy");
+    console.log("IntersectionObserver");
     const imageObserver = new IntersectionObserver(function (
       entries,
       observer
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       lazyloadThrottleTimeout = setTimeout(function () {
-        const scrollTop = window.pageYOffset;
+        const scrollTop = window.scrollY;
         lazyloadImages.forEach(function (img) {
           if (img.offsetTop < window.innerHeight + scrollTop) {
             img.src = img.dataset.src!;

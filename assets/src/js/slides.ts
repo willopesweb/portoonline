@@ -28,7 +28,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   if (document.querySelector(".js-news-carousel")) {
-    console.log(document.querySelector(".js-news-carousel"));
     const newsCarousel = new Splide(".js-news-carousel", {
       arrows: false,
       type: "loop",
@@ -37,7 +36,6 @@ window.addEventListener("DOMContentLoaded", () => {
       autoplay: true,
     });
 
-    console.log(newsCarousel);
     newsCarousel.mount();
   }
 });

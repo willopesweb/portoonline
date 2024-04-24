@@ -204,7 +204,7 @@ function theme_slides_template($custom)
   if ($custom['imagem_mobile']) {
     $html .= '<source media="(max-width:600px)" srcset="' . $custom["imagem_mobile"] . '">';
   };
-  $html .= '<img width="1500" height="415" class="lazy" data-src="' . $custom["imagem"] . '" alt="' . $custom['titulo'] . '" />';
+  $html .= '<img width="1500" height="415" src="' . $custom["imagem"] . '" alt="' . $custom['titulo'] . '" />';
   $html .= '</picture>';
   $html .= '<h2 class="screen-readers-only">' . $custom['titulo'] . '</h2>';
   $html .= '</article>';

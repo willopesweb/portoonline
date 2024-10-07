@@ -95,11 +95,16 @@ if (post_password_required())
 				?>
 					<input type="hidden" name="UserId" value="<?= get_current_user_id() ?>">
 					<input type="hidden" name="Nome" value="<?= esc_html($current_user->display_name) ?>">
+					<input type="hidden" name="Email" value="<?= esc_html($current_user->user_email) ?>">
 				<?php else : ?>
 					<input type="hidden" name="UserId" value="0">
 					<label class="c-form__label">
 						<span>Nome</span>
 						<input required aria-required="true" aria-invalid="false" value="" type="text" name="Nome"></span>
+					</label>
+					<label class="c-form__label">
+						<span>Email</span>
+						<input required aria-required="true" aria-invalid="false" value="" type="text" name="Email"></span>
 					</label>
 				<?php endif; ?>
 				<label class="c-form__label">

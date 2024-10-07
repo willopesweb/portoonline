@@ -14,6 +14,7 @@ interface Comment {
   comment: string;
   name: string;
   userId: string;
+  userEmail: string;
   parent?: string;
   captcha?: string;
   captchaCode?: string;
@@ -46,6 +47,7 @@ async function handleSubmit(this: HTMLElement, e: Event) {
       name: formDataObject.Nome,
       comment: formDataObject.Comentario,
       userId: formDataObject.UserId,
+      userEmail: formDataObject.Email,
       parent: formDataObject.ParentId,
       captcha: formDataObject.Captcha,
       captchaCode: formDataObject.CaptchaCode,

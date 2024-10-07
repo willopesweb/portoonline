@@ -55,6 +55,11 @@ $component-name: c-form;
 		}
 	}
 
+	.c-button {
+		height: fit-content;
+		padding: rem(20) rem(40);
+	}
+
 	textarea,
 	input:not([type="submit"]),
 	select,

@@ -11,7 +11,7 @@ get_header();
 		</header>
 		<div class="l-page__single-content">
 			<?php echo the_content(); ?>
-			<form id="anuncio" action="" method="post" class="c-form js-form" aria-label="Formulário de contato">
+			<form action="" method="post" class="c-form js-form" aria-label="Formulário de contato">
 				<label class="c-form__label">
 					<span>Seu nome</span>
 					<input required aria-required="true" aria-invalid="false" value="" type="text" name="Nome">

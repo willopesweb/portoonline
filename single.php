@@ -19,8 +19,6 @@ $post_id = get_the_ID();
 $content = get_the_content();
 $gallery_shortcode_id = check_gallery_shortcode($content);
 $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria_id");
-
-
 ?>
 
 <script defer src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/js/gallery.js"></script>
@@ -99,13 +97,7 @@ $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria
 				<a class="icon-whatsapp" href="whatsapp://send?text=<?= get_the_title() ?> - <?= get_permalink() ?>" target="_blank"></a>
 			</div>
 		</article>
-		<!-- Ad Single Post -->
-		<!-- 		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7379900084732959" crossorigin="anonymous"></script>
-		
-		<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7379900084732959" data-ad-slot="2738902532" data-ad-format="auto" data-full-width-responsive="true"></ins>
-		<script>
-			(adsbygoogle = window.adsbygoogle || []).push({});
-		</script> -->
+
 		<div class="l-page__comments">
 			<?php
 			if (comments_open()) {

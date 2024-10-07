@@ -1,6 +1,28 @@
 <?php
 get_header();
+
+
+function check_gallery_shortcode($content)
+{
+	// Verifica se o shortcode [rl_gallery] está presente no conteúdo
+	if (has_shortcode($content, 'rl_gallery')) {
+		// Usa expressão regular para capturar o ID do shortcode
+		if (preg_match('/\[rl_gallery id="(\d+)"\]/', $content, $matches)) {
+			$gallery_id = $matches[1]; // Salva o valor do ID
+			return $gallery_id; // Retorna o ID do gallery
+		}
+	}
+	return null;
+}
+
+$post_id = get_the_ID();
+$content = get_the_content();
+$gallery_shortcode_id = check_gallery_shortcode($content);
+$gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria_id");
+
+
 ?>
+
 <script defer src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/js/gallery.js"></script>
 <div class="l-page__main" style="padding-top:40px">
 	<main id="content">
@@ -18,7 +40,6 @@ get_header();
 				'titulo' => get_the_title(),
 				'imagem' => get_the_post_thumbnail_url(),
 				'data' => get_the_date(),
-				//'descricao' => get_the_excerpt(),
 				'categoria' => array(get_cat_name($category_id), get_category_link($category_id)),
 				'categoria_pai' => isset($parent_category_id) ? get_cat_name($parent_category_id) : "",
 				'categoria_pai_link' => isset($parent_category_id) ? get_category_link($parent_category_id) : "",
@@ -52,14 +73,15 @@ get_header();
 			}
 			$html .= "</div>";
 			$html .= '</header>';
-			/* if ($post_info['descricao']) {
-				$html .= '<div class="c-post__descricao">' . $post_info['descricao'] . '</div>';
-			} */
 			$html .= '</div>';
 
 			echo $html;
+
 			echo '<div class="l-page__single-content"/>';
 			echo the_content();
+			if ($gallery_id) {
+				theme_custom_gallery($gallery_id);
+			}
 			echo '</div>';
 
 			?>

@@ -1,5 +1,40 @@
 <?php
 
+// Galeria personalizada
+function theme_custom_gallery($id)
+{
+  // Verifica se o ID foi fornecido e se é um número inteiro
+  $gallery_id = intval($id);
+  if ($gallery_id <= 0) {
+    return;
+  }
+
+  // Consulta ao banco de dados para obter o post do tipo "rl_gallery" com o ID fornecido
+  $gallery_post = get_post($gallery_id);
+
+  // Verifica se o post existe e se é do tipo "rl_gallery"
+  if (!$gallery_post || $gallery_post->post_type !== 'rl_gallery') {
+    return 'Nenhuma galeria encontrada com o ID fornecido.';
+  }
+
+  $gallery_images = get_post_meta($gallery_post->ID, '_rl_images', true)["media"]["attachments"]["ids"];
+
+  if ($gallery_images) {
+    echo  '<div class="c-gallery">';
+    foreach ($gallery_images as $image) {
+      $image_url = esc_url(wp_get_attachment_image_url($image, 'medium_large'));
+      $thumbnail_url = esc_url(wp_get_attachment_image_url($image, "thumbnail"));
+      echo  '<div class="c-gallery__item">';
+      echo  '<a data-fslightbox="" href="' . $image_url . '" class="c-gallery__link">';
+      echo  '<img class="lazy" data-src="' . $thumbnail_url . '" width="300" height="300" alt="">';
+      echo  '</a>';
+      echo '</div>';
+    }
+    echo  '</div>';
+  }
+}
+
+
 // Pesquisa personalizada
 function custom_search_filter($query)
 {
@@ -73,6 +108,32 @@ function theme_social_networks()
   return $html;
 }
 
+// Icone de Loading
+function theme_custom_loading()
+{
+  echo '<div class="c-loading"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
+}
+
+//Comentário
+function theme_custom_comment($id, $avatar, $date, $author, $content, $parent = true)
+{
+  echo '<div class="l-comments__card ' . (($parent === true) ? 'parent' : '') . '" id="comment-' . $id  . '">';
+  echo '<div class="l-comments__avatar">' . $avatar  . '</div>';
+  echo '<div class="l-comments__card-main">';
+  echo '<div class="l-comments__card-header">';
+  echo '<span class="l-comments__card-date">' . $date  . '</span>';
+  echo '<span class="l-comments__card-author"><cite>' . $author  . '</cite> disse:</span>';
+  echo '</div>';
+  echo '<div class="l-comments__card-content">';
+  echo '<p>' . $content  . '</p>';
+  if ($parent === true) {
+    echo '<a href="#comment" data-id="' . $id  . '" class="c-button--secondary js-reply-comment">Responder</a>';
+  }
+  echo '</div>';
+  echo '</div>';
+  echo '</div>';
+}
+
 function custom_posts_per_page($query)
 {
   if ($query->is_archive() && $query->is_main_query()) {
@@ -93,15 +154,17 @@ function resume_text($text, $limitCharacters = 60)
 //Retorna os posts conforme os argumentos fornecidos
 function theme_get_posts($args)
 {
-  if (!$args) return;
+  if (!$args) return [];
 
   $query = new WP_Query($args);
+  $posts = array();  // Array para armazenar os posts
+
   if ($query->have_posts()) {
-    $i = 1;
     while ($query->have_posts()) {
       $query->the_post();
       $categories = get_the_category();
       $parent_category_id = null;
+
       if (empty($categories[1])) {
         $category_id = $categories[0]->term_id;
       } else {
@@ -109,9 +172,11 @@ function theme_get_posts($args)
         $parent_category_id = $categories[0]->term_id;
       }
 
+      // Criação do array de um post
       $post = array(
         'titulo' => resume_text(get_the_title(), 80),
-        'imagem' => get_the_post_thumbnail_url(),
+        'imagem' => get_the_post_thumbnail_url(get_the_ID(), 'medium_large'),
+        'imagem_mobile' => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
         'data' => get_the_date(),
         'descricao' => get_the_excerpt(),
         'categoria' => array(get_cat_name($category_id), get_category_link($category_id)),
@@ -120,46 +185,51 @@ function theme_get_posts($args)
         'link' => get_permalink(),
         'comentarios' => get_comments_number()
       );
-
-      echo theme_post_template($post);
+      $posts[] = $post;
     }
   }
+
   wp_reset_postdata();
+
+  return $posts;
 }
 
 //Template para os posts
 function theme_post_template($post)
 {
-  $html = '<article class="c-post">';
-  $html .= '<a class="c-post__image" href="' . $post['link'] . '" title="' . $post['titulo'] . '">';
-  $html .= '<img width="530" height="300" class="lazy" data-src="' . $post['imagem'] . '" alt="' . $post['titulo'] . '" />';
-  $html .= '</a>';
-  $html .= '<header class="c-post__header">';
-  $html .= '<ul class="c-post__categories">';
+  echo '<article class="c-post">';
+  echo '<a class="c-post__image" href="' . $post['link'] . '" title="' . $post['titulo'] . '">';
+  echo '<picture>';
+  if ($post['imagem_mobile']) {
+    echo '<source media="(max-width:600px)" srcset="' . $post["imagem_mobile"] . '">';
+  };
+  echo '<img width="530" height="300" class="lazy" data-src="' . $post['imagem'] . '" alt="' . $post['titulo'] . '" />';
+  echo '</picture>';
+  echo '</a>';
+  echo '<header class="c-post__header">';
+  echo '<ul class="c-post__categories">';
   if ($post['categoria']) {
-    $html .= '<li class="c-post__category"><a href="' . $post['categoria'][1] . '" title="' . $post['categoria'][0] . '">' . $post['categoria'][0] . '</a></li>';
+    echo '<li class="c-post__category"><a href="' . $post['categoria'][1] . '" title="' . $post['categoria'][0] . '">' . $post['categoria'][0] . '</a></li>';
   }
   if ($post['categoria_pai'] !== "" && $post['categoria_pai_link'] !== "") {
-    $html .= '<li class="c-post__category"><a href="' . $post['categoria_pai_link'] . '" title="' . $post['categoria_pai'] . '">' . $post['categoria_pai'] . '</a></li>';
+    echo '<li class="c-post__category"><a href="' . $post['categoria_pai_link'] . '" title="' . $post['categoria_pai'] . '">' . $post['categoria_pai'] . '</a></li>';
   }
-  $html .= '</ul>';
-  $html .= '<h2 class="c-post__title"><a href="' . $post['link'] . '" title="' . $post['titulo'] . '">' . $post['titulo'] . '</a></h2>';
-  $html .= '<div class="c-post__info">';
+  echo '</ul>';
+  echo '<h2 class="c-post__title"><a href="' . $post['link'] . '" title="' . $post['titulo'] . '">' . $post['titulo'] . '</a></h2>';
+  echo '<div class="c-post__info">';
   if ($post['data']) {
-    $html .= '<p class="c-post__data">' . $post['data'] . '</p>';
+    echo '<p class="c-post__data">' . $post['data'] . '</p>';
   }
   if (isset($post['comentarios'])) {
-    $html .= '<a href="' . $post['link'] . '#respond" title="Ver comentários" class="c-post__comentarios">' . $post['comentarios'] . " " . ($post['comentarios'] === 1 ? "Comentário" : "Comentários") . '</a>';
+    echo '<a href="' . $post['link'] . '#respond" title="Ver comentários" class="c-post__comentarios">' . $post['comentarios'] . " " . ($post['comentarios'] === 1 ? "Comentário" : "Comentários") . '</a>';
   }
-  $html .= "</div>";
-  $html .= '</header>';
+  echo "</div>";
+  echo '</header>';
   if ($post['descricao']) {
-    $html .= '<div class="c-post__descricao">' . $post['descricao'] . '</div>';
+    echo '<div class="c-post__descricao">' . $post['descricao'] . '</div>';
   }
-  $html .= '<a href="' . $post['link'] . '" class="c-button">Ler mais</a>';
-  $html .= '</article>';
-
-  return $html;
+  echo '<a href="' . $post['link'] . '" class="c-post__button c-button--secondary">Ler mais</a>';
+  echo '</article>';
 }
 
 //Retorna os slides conforme os argumentos fornecidos
@@ -236,30 +306,3 @@ function theme_banner_template($custom)
   }
   return $html;
 }
-
-/* function theme_banners_archive($custom)
-{
-  $html = "";
-
-  if ($custom["link"]) {
-    $html .= '<a target="_blank" rel="nofollow" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-page-home__banner">';
-  } else {
-    $html .= '<article class="l-page-home__banner">';
-    $html .= '<h3 class="screen-readers-only">' . $custom['titulo'] . '</h3>';
-  }
-
-  $html .= '<picture>';
-  if ($custom['imagem_mobile']) {
-    $html .= '<source media="(max-width:600px)" srcset="' . $custom['imagem_mobile'] . '">';
-  };
-  $html .= '<img loading="lazy" width="1000" height="100" src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '" />';
-  $html .= '</picture>';
-
-  if ($custom["link"]) {
-    $html .= '</a>';
-  } else {
-    $html .= '</article>';
-  }
-
-  return $html;
-} */

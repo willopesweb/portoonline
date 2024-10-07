@@ -1,181 +1,126 @@
 $layout-name: l-comments;
 
 .#{$layout-name} {
-	overflow: hidden;
+	@include content;
 
 	&__header {
+		display: grid;
+		gap: rem(10);
+		place-items: center;
 		width: 100%;
 	}
 
 	&__title {
-		font-size: rem(18);
-		padding-bottom: $global-module-size;
+		font-size: rem(24);
+		font-weight: 700;
+		justify-content: center;
+		line-height: rem(27);
+		margin: 0 auto;
+		max-width: rem(500);
 		text-align: center;
+		width: 100%;
+	}
 
-		@include breakpoint(800) {
-			font-size: rem(24);
+	&__card {
+		display: grid;
+		gap: $global-module-size / 2;
+		grid-template-columns: 80px calc(100% - 80px);
+
+		&.parent {
+			padding: $global-module-size;
+		}
+	}
+
+	&__card-main {
+		display: flex;
+		flex-direction: column;
+		gap: $global-module-size / 2;
+		grid-column: 2;
+	}
+
+	&__card-header,
+	&__card-content {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__card-content {
+		display: flex;
+		flex-direction: column;
+		gap: $global-module-size / 2;
+	}
+
+	&__card-date {
+		font-size: rem(12);
+	}
+
+	&__avatar {
+		display: grid;
+		grid-column: 1;
+		place-items: center;
+
+		img {
+			border-radius: 50%;
 		}
 	}
 
 	&__list {
+		display: flex;
+		flex-direction: column;
 		list-style-type: none;
+		margin-bottom: $global-module-size;
 		width: 100%;
 
-		.comment {
-			display: flex;
-			flex-direction: column;
-			margin-top: $global-module-size;
-
-			.comment-body {
-				@include breakpoint(800) {
-					display: grid;
-					grid-template-columns: rem(84) calc(100% - 84px);
-					margin-bottom: $global-module-size;
-				}
-
-				.comment-author {
-					align-items: center;
-					display: flex;
-
-					@include breakpoint(800) {
-						grid-column: 2 / 3;
-						justify-content: flex-start;
-						position: relative;
-					}
-
-					img {
-						border-radius: 50%;
-						height: rem(30);
-						margin-right: rem(10);
-						object-fit: cover;
-						width: rem(30);
-
-						@include breakpoint(800) {
-							height: rem(80);
-							position: absolute;
-							right: calc(100% + 5px);
-							top: 0;
-							width: rem(80);
-						}
-					}
-
-					// Autor
-					.fn {
-						margin-right: rem(5);
-
-						a {
-							color: var(--theme-color-1);
-							transition: 0.15s linear;
-
-							&:hover {
-								text-decoration: underline;
-							}
-						}
-					}
-				}
-
-				.comment-meta {
-					font-size: rem(12);
-					grid-column: 2;
-
-					.comment-edit-link {
-						transition: 0.15s linear;
-
-						&:hover {
-							color: var(--theme-color-1);
-							text-decoration: underline;
-						}
-					}
-				}
-
-				p {
-					font-size: 14px;
-					// O Comentário
-					margin: rem(10) 0;
-					max-width: rem(300);
-
-					a {
-						word-break: break-all;
-					}
-
-					@include breakpoint(800) {
-						font-size: 16px;
-						grid-column: 2;
-						max-width: none;
-					}
-				}
-
-				.reply {
-					display: flex;
-					grid-column: 2;
-
-					& .comment-reply-link {
-						@include c-button;
-					}
-				}
+		&>.#{$layout-name}__list-item {
+			&::after {
+				background-color: var(--theme-color-1);
+				content: "";
+				display: block;
+				height: rem(2);
+				width: 100%;
 			}
 		}
 
-		& .children {
-			display: flex;
-			flex-direction: column;
+		.children {
+			.#{$layout-name}__list-item {
+				padding-bottom: $global-module-size;
+				padding-left: $global-module-size;
 
-			& .comment {
-				@include breakpoint(800) {
-					padding-left: rem(20);
+				.#{$layout-name}__avatar {
 					position: relative;
 
 					&::before {
 						content: "⤴";
 						display: block;
 						font-size: rem(20);
-						left: 0;
-						padding-left: $global-module-size * 2;
+						left: -25px;
 						position: absolute;
-						top: rem(20);
+						top: 20px;
 						transform: rotate(90deg);
 					}
+				}
+
+				@include breakpoint(400) {
+					padding-left: rem(50);
 				}
 			}
 		}
 	}
 
-	& .comment-reply-title {
-		align-items: center;
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		font-size: rem(24);
-		font-weight: 700;
-		justify-content: center;
-		line-height: rem(27);
-		padding-top: $global-module-size;
-		text-align: center;
-		width: 100%;
+	&__cancel-reply {
+		color: var(--theme-color-6);
+		cursor: pointer;
+		opacity: 0;
+		transition: var(--theme-transition);
+		visibility: hidden;
 
-		// Link para responder comentário
-		& > a {
-			font-weight: 700;
-			margin-left: rem(5);
-			transition: 0.15s linear;
-
-			&:hover {
-				color: var(--theme-color-1);
-			}
+		&.is-visible {
+			opacity: 1;
+			visibility: visible;
 		}
 
-		// Cancelar Resposta
-		small {
-			flex-basis: 100%;
-
-			a {
-				color: var(--theme-color-1);
-				transition: 0.15s linear;
-
-				&:hover {
-					color: red;
-				}
-			}
+		&:hover {
+			color: red;
 		}
 	}
 
@@ -185,75 +130,7 @@ $layout-name: l-comments;
 		width: 100%;
 
 		.c-form {
-			display: flex;
-			flex-direction: column;
-			gap: $global-module-size;
-			width: 80%;
-
-			@include breakpoint(600) {
-				width: 100%;
-			}
-
-			textarea,
-			input[type="text"],
-			input[type="email"] {
-				background-color: #f8f8f8;
-				box-sizing: border-box;
-				font-size: 16px;
-				line-height: 1.5;
-				padding: 10px;
-				width: 100%;
-			}
-
-			.comment-notes,
-			.logged-in-as {
-				font-size: rem(14);
-			}
-
-			& .logged-in-as {
-				& a {
-					&:hover {
-						color: var(--theme-color-6);
-						transition: 0.15s linear;
-					}
-				}
-			}
-
-			& .comment-form-author {
-				order: 0;
-			}
-
-			& .comment-form-email {
-				order: 1;
-			}
-
-			& .comment-form-comment {
-				order: 2;
-			}
-
-			.comment-form-cookies-consent {
-				align-items: center;
-				display: flex;
-				order: 3;
-
-				input {
-					flex-basis: 8%;
-					justify-self: flex-start;
-					margin: 0;
-				}
-
-				label {
-					flex-basis: 90%;
-					margin: 0;
-					padding-left: rem(5);
-				}
-			}
-
-			& .form-submit {
-				display: flex;
-				justify-content: flex-start;
-				order: 4;
-			}
+			max-width: rem(500);
 		}
 	}
 }

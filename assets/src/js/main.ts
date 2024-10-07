@@ -3,6 +3,8 @@ import "@splidejs/splide/css/core";
 import "@splidejs/splide/css";
 
 import "./lazyload";
+import "./form";
+import "./comments";
 
 const mobileButton: HTMLElement | null =
   document.getElementById("mobileButton");

@@ -15,31 +15,20 @@
 	--text-color-3: #888;
 	--text-color-4: #444;
 
+	--font-family: "Open Sans", sans-serif;
+
 	--main-text-color: --text-color-1;
 	--body-background-color: --theme-color-3;
 	--logo-color: --theme-color-2;
 
-	--theme-default-transition: 0.15s linear;
+	--theme-transition: 0.15s linear;
 }
-
-$theme-color-1: #efc7ad;
-$theme-color-2: #0f0f0f;
-$theme-color-3: #fff2ea;
-$theme-color-4: #f9dfce;
-
-$text-color-1: #0f0f0f;
-$text-color-2: #fff;
-$text-color-3: #7c7c7c;
-$text-color-4: #000;
-
-$font-family-1: "Open Sans", sans-serif;
-$font-family-2: "Open Sans", sans-serif;
 
 body {
 	background-color: var(--body-background-color);
 	color: var(--main-text-color);
 	font-display: swap;
-	font-family: $font-family-1;
+	font-family: var(--font-family);
 }
 
 /*SOCIAL COLORS*/

@@ -54,7 +54,7 @@ $component-name: c-nav;
 			flex-direction: column;
 
 			&.menu-item-has-children {
-				transition: var(--theme-default-transition);
+				transition: var(--theme-transition);
 
 				& > a {
 					cursor: pointer;
@@ -69,7 +69,7 @@ $component-name: c-nav;
 						margin-left: rem(10);
 						padding: 2px;
 						transform: rotate(45deg);
-						transition: var(--theme-default-transition);
+						transition: var(--theme-transition);
 					}
 				}
 
@@ -153,7 +153,7 @@ $component-name: c-nav;
 						margin-left: rem(10);
 						padding: 2px;
 						transform: rotate(45deg);
-						transition: var(--theme-default-transition);
+						transition: var(--theme-transition);
 					}
 				}
 

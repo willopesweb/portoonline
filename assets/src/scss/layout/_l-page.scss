@@ -100,9 +100,13 @@ $layout-name: l-page;
 		color: var(--text-color-4);
 		padding: $global-module-size / 2;
 
-		.rl-loading {
-			opacity: 1;
-			pointer-events: initial;
+		&:has(.c-gallery) {
+			display: flex;
+			flex-direction: column;
+
+			.c-gallery {
+				order: 10;
+			}
 		}
 
 		p,
@@ -121,7 +125,7 @@ $layout-name: l-page;
 			a {
 				color: var(--theme-color-1);
 				text-decoration: underline;
-				transition: var(--theme-default-transition);
+				transition: var(--theme-transition);
 
 				&:hover,
 				&:active,
@@ -140,41 +144,6 @@ $layout-name: l-page;
 		.wpforms-container {
 			.wpforms-submit {
 				@include c-button;
-			}
-		}
-
-		.rl-gallery-container {
-			.rl-gallery-item a {
-				display: flex;
-				height: rem(200);
-				position: relative;
-				transition: var(--theme-default-transition);
-
-				&:hover,
-				&:focus,
-				&:active {
-					&::after {
-						opacity: 0.5;
-					}
-				}
-
-				&::after {
-					background-color: var(--theme-color-3);
-					content: "";
-					display: flex;
-					height: 100%;
-					left: 0;
-					opacity: 0;
-					position: absolute;
-					top: 0;
-					width: 100%;
-				}
-
-				img {
-					height: 100%;
-					object-fit: cover;
-					width: 100%;
-				}
 			}
 		}
 
@@ -202,7 +171,7 @@ $layout-name: l-page;
 			display: flex;
 			height: rem(48);
 			justify-content: center;
-			transition: var(--theme-default-transition);
+			transition: var(--theme-transition);
 			width: rem(48);
 
 			&::before {
@@ -241,6 +210,10 @@ $layout-name: l-page;
 				background-color: var(--theme-color-3);
 			}
 		}
+	}
+
+	&__institutional {
+		outline: 1px solid red;
 	}
 
 	&__comments {

@@ -48,8 +48,9 @@ function slides_topo_shortcode()
 
   $query = new WP_Query($args);
   if ($query->have_posts()) {
-    echo '<div class="l-header__slide c-carousel js-header-carousel splide">';
-    echo '<div class="splide__track"><ul class="splide__list">';
+    $carousel = ($query->post_count > 1) ?  true : false;
+    echo '<div class="l-header__slide' . ($carousel ? ' c-carousel js-header-carousel splide' : '') . '">';
+    if ($carousel) echo '<div class="splide__track"><ul class="splide__list">';
     while ($query->have_posts()) {
       $query->the_post();
       $custom = array(
@@ -58,7 +59,7 @@ function slides_topo_shortcode()
         'imagem_mobile' => get_field("imagem_mobile"),
         'link' => get_field("link"),
       );
-      echo '<li class="splide__slide">';
+      if ($carousel) echo '<li class="splide__slide">';
       if ($custom["link"]) {
         echo '<a target="_blank" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-header__banner">';
       } else {
@@ -78,9 +79,9 @@ function slides_topo_shortcode()
       } else {
         echo '</div>';
       }
-      echo '</li>';
+      if ($carousel) echo '</li>';
     }
-    echo '</ul></div>';
+    if ($carousel) echo '</ul></div>';
     echo '</div>';
   }
   wp_reset_postdata();

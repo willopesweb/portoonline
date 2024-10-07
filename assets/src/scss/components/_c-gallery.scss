@@ -1,0 +1,49 @@
+$component-name: c-gallery;
+
+.#{$component-name} {
+	display: grid;
+	gap: 5px;
+	grid-template-columns: 1fr 1fr;
+
+	@include breakpoint(600) {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+
+	@include breakpoint(800) {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+
+	&__link {
+		display: flex;
+		height: rem(200);
+		position: relative;
+		transition: var(--theme-transition);
+
+		&:hover,
+		&:focus,
+		&:active {
+			&::after {
+				opacity: 0.5;
+			}
+		}
+
+		&::after {
+			background-color: var(--theme-color-3);
+			content: "";
+			display: flex;
+			height: 100%;
+			left: 0;
+			opacity: 0;
+			position: absolute;
+			top: 0;
+			transition: var(--theme-transition);
+			width: 100%;
+		}
+
+		img {
+			height: 100%;
+			object-fit: cover;
+			width: 100%;
+		}
+	}
+}

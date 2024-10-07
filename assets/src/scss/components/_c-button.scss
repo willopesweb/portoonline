@@ -1,6 +1,6 @@
 $component-name: c-button;
 
-$button-font-family: $font-family-1;
+$button-font-family: var(--font-family);
 
 :root {
 	--button-outline-color: var(--text-color-2);
@@ -19,8 +19,9 @@ $button-font-family: $font-family-1;
 	font-weight: 700;
 	padding: rem(10) rem(20);
 	text-transform: uppercase;
-	transition: 0.15s linear;
+	transition: var(--theme-transition);
 	width: fit-content;
+
 	&:focus,
 	&:active,
 	&:hover {
@@ -35,6 +36,7 @@ $button-font-family: $font-family-1;
 	border: 1px solid var(--button-outline-color);
 	color: var(--button-text-color);
 	padding: rem(7) rem(14);
+
 	&:hover,
 	&:focus,
 	&:active {
@@ -44,10 +46,32 @@ $button-font-family: $font-family-1;
 	}
 }
 
+@mixin c-button--secondary {
+	background-color: var(--theme-color-8);
+	border-radius: rem(10);
+	color: var(--button-text-color);
+	cursor: pointer;
+	font-family: $button-font-family, sans-serif;
+	font-size: rem(12);
+	font-weight: 700;
+	height: fit-content;
+	padding: rem(10) rem(20);
+	transition: var(--theme-transition);
+	width: fit-content;
+
+	&:hover,
+	&:focus,
+	&:active {
+		background-color: var(--button-hover-color);
+		border: none;
+		box-shadow: none;
+	}
+}
+
 .#{$component-name} {
 	@include c-button;
 }
 
-.#{$component-name}--outline {
-	@include c-button--outline;
+.#{$component-name}--secondary {
+	@include c-button--secondary;
 }

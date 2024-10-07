@@ -19,7 +19,7 @@ $layout-name: l-page-home;
 			padding-bottom: 0;
 			position: relative;
 
-			.c-button,
+			&__button,
 			&__descricao {
 				display: none;
 			}
@@ -62,11 +62,10 @@ $layout-name: l-page-home;
 	}
 
 	&__recents {
-		display: none;
+		display: grid;
+		gap: $global-module-size / 2;
 
 		@include breakpoint(600) {
-			display: grid;
-			gap: $global-module-size / 2;
 			grid-template-columns: 1fr 1fr;
 		}
 
@@ -82,7 +81,13 @@ $layout-name: l-page-home;
 	}
 
 	&__slides {
+
 		background-color: var(--text-color-3);
+		display: none;
+
+		@include breakpoint(600) {
+			display: flex;
+		}
 
 		.splide__track {
 			height: 100%;
@@ -121,7 +126,7 @@ $layout-name: l-page-home;
 
 		a {
 			color: var(--theme-color-1);
-			transition: var(--theme-default-transition);
+			transition: var(--theme-transition);
 
 			&:hover,
 			&:active,

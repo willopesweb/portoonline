@@ -3,19 +3,6 @@
 get_header();
 
 
-// Evita que categorias de produtos e serviços apareçam como notícias
-/* $exclude_categories = array();
-$produtos_category = get_category_by_slug('produtos-servicos');
-if ($produtos_category) {
-	$exclude_categories[] = $produtos_category->term_id;
-
-
-	$subcategories = get_categories(array('parent' => $produtos_category->term_id));
-	foreach ($subcategories as $subcategory) {
-		$exclude_categories[] = $subcategory->name;
-	}
-} */
-
 // Banners exibidos entre o conteudo da página no Mobile
 $banners = array();
 $banner_query = new WP_Query(array(
@@ -50,6 +37,21 @@ if ($banner_query->have_posts()) {
 	}
 	wp_reset_postdata();
 }
+
+//Posts recentes
+$recents = theme_get_posts(array(
+	'post_type' => 'post',
+	'post_status' => 'publish',
+	'posts_per_page' => 4,
+	'order' => 'DESC',
+));
+
+if (!empty($recents)) {
+	foreach ($recents as $post) {
+		echo '<link rel="prefetch" href="' . $post['link'] . '">';
+	}
+}
+
 ?>
 <section class="l-page">
 	<div class="l-page-home__posts">
@@ -57,71 +59,34 @@ if ($banner_query->have_posts()) {
 			<div class="splide__track">
 				<ul class="splide__list">
 					<?php
-					$args = array(
-						'post_type' => 'post',
-						'post_status' => 'publish',
-						'posts_per_page' => 4,
-						//'category__not_in' => $exclude_categories,
-						'order' => 'DESC',
-					);
-					$html = '';
-					$query = new WP_Query($args);
-					if ($query->have_posts()) {
-						$i = 1;
-						while ($query->have_posts()) {
-							$query->the_post();
-							$categories = get_the_category();
-							$parent_category_id = null;
-							$parent_category = array('', '');
-							if (!empty($categories)) {
-								$category_ancestors = get_ancestors($categories[0]->term_id, 'category');
-								if (!empty($category_ancestors)) {
-									$parent_category_id = $category_ancestors[count($category_ancestors) - 1];
-								}
-							}
-							$post = array(
-								'titulo' => get_the_title(),
-								'imagem' => get_the_post_thumbnail_url(),
-								'data' => get_the_date(),
-								'categoria' => array(get_the_category()[0]->name, get_category_link(get_the_category()[0]->term_id)),
-								'categoria_pai' => isset($parent_category_id) ? get_cat_name($parent_category_id) : "",
-								'categoria_pai_link' => isset($parent_category_id) ? get_category_link($parent_category_id) : "",
-								'link' => get_permalink(),
-								'comentarios' => get_comments_number()
-							);
-
-							$html = "";
-
-							$html .= '<li class="splide__slide"><article class="c-post">';
-							$html .= '<a class="c-post__image" href="' . $post['link'] . '" title="' . $post['titulo'] . '">';
-							$html .= '<img loading="lazy" width="530" height="300" src="' . $post['imagem'] . '" alt="' . $post['titulo'] . '" />';
-							$html .= '</a>';
-							$html .= '<header class="c-post__header">';
-							$html .= '<ul class="c-post__categories">';
+					if (!empty($recents)) {
+						foreach ($recents as $post) {
+							echo '<li class="splide__slide"><article class="c-post">';
+							echo '<a class="c-post__image" href="' . $post['link'] . '" title="' . $post['titulo'] . '">';
+							echo '<img class="lazy" width="530" height="300" data-src="' . $post['imagem'] . '" alt="' . $post['titulo'] . '" />';
+							echo '</a>';
+							echo '<header class="c-post__header">';
+							echo '<ul class="c-post__categories">';
 							if ($post['categoria']) {
-								$html .= '<li class="c-post__category"><a href="' . $post['categoria'][1] . '" title="' . $post['categoria'][0] . '">' . $post['categoria'][0] . '</a></li>';
+								echo '<li class="c-post__category"><a href="' . $post['categoria'][1] . '" title="' . $post['categoria'][0] . '">' . $post['categoria'][0] . '</a></li>';
 							}
 							if ($post['categoria_pai'] !== "" && $post['categoria_pai_link'] !== "") {
-								$html .= '<li class="c-post__category"><a href="' . $post['categoria_pai_link'] . '" title="' . $post['categoria_pai'] . '">' . $post['categoria_pai'] . '</a></li>';
+								echo '<li class="c-post__category"><a href="' . $post['categoria_pai_link'] . '" title="' . $post['categoria_pai'] . '">' . $post['categoria_pai'] . '</a></li>';
 							}
-							$html .= '</ul>';
-							$html .= '<h2 class="c-post__title"><a href="' . $post['link'] . '" title="' . $post['titulo'] . '">' . $post['titulo'] . '</a></h2>';
-							$html .= '<div class="c-post__info">';
+							echo '</ul>';
+							echo '<h2 class="c-post__title"><a href="' . $post['link'] . '" title="' . $post['titulo'] . '">' . $post['titulo'] . '</a></h2>';
+							echo '<div class="c-post__info">';
 							if ($post['data']) {
-								$html .= '<p class="c-post__data">' . $post['data'] . '</p>';
+								echo '<p class="c-post__data">' . $post['data'] . '</p>';
 							}
 							if (isset($post['comentarios'])) {
-								$html .= '<a href="' . $post['link'] . '#respond" title="Ver comentários" class="c-post__comentarios">' . $post['comentarios'] . " " . ($post['comentarios'] === 1 ? "Comentário" : "Comentários") . '</a>';
+								echo '<a href="' . $post['link'] . '#respond" title="Ver comentários" class="c-post__comentarios">' . $post['comentarios'] . " " . ($post['comentarios'] === 1 ? "Comentário" : "Comentários") . '</a>';
 							}
-							$html .= "</div>";
-							$html .= '</header>';
-							$html .= '</article></li>';
-
-							echo $html;
+							echo "</div>";
+							echo '</header>';
+							echo '</article></li>';
 						}
 					}
-					wp_reset_postdata();
-
 					?>
 				</ul>
 			</div>
@@ -129,14 +94,12 @@ if ($banner_query->have_posts()) {
 		<div class="l-page-home__recents">
 			<?php
 
-			$args = array(
-				'post_type' => 'post',
-				'post_status' => 'publish',
-				'posts_per_page' => 4,
-				'order' => 'DESC',
-				//'category__not_in' => $exclude_categories,
-			);
-			theme_get_posts($args);
+
+			if (!empty($recents)) {
+				foreach ($recents as $post) {
+					theme_post_template($post);
+				}
+			}
 			?>
 		</div>
 	</div>
@@ -149,14 +112,21 @@ if ($banner_query->have_posts()) {
 			</header>
 			<div class="l-posts__content l-posts__content--two-columns">
 				<?php
-				$args = array(
+
+				$events = theme_get_posts(array(
 					'post_type' => 'post',
 					'post_status' => 'publish',
 					'posts_per_page' => 4,
 					'order' => 'DESC',
 					'category_name' => "eventos"
-				);
-				theme_get_posts($args);
+				));
+
+
+				if (!empty($events)) {
+					foreach ($events as $post) {
+						theme_post_template($post);
+					}
+				}
 				?>
 			</div>
 			<footer class="l-posts__footer">
@@ -219,14 +189,21 @@ if ($banner_query->have_posts()) {
 			</header>
 			<div class="l-posts__content l-posts__content--two-columns">
 				<?php
-				$args = array(
+
+				$obituarioPosts = theme_get_posts(array(
 					'post_type' => 'post',
 					'post_status' => 'publish',
 					'posts_per_page' => 4,
 					'order' => 'DESC',
 					'category_name' => "obituario-porto-ferreira"
-				);
-				theme_get_posts($args);
+				));
+
+
+				if (!empty($obituarioPosts)) {
+					foreach ($obituarioPosts as $post) {
+						theme_post_template($post);
+					}
+				}
 				?>
 			</div>
 			<footer class="l-posts__footer">
@@ -290,14 +267,20 @@ if ($banner_query->have_posts()) {
 			</header>
 			<div class="l-posts__content l-posts__content--two-columns">
 				<?php
-				$args = array(
+				$policialPosts = theme_get_posts(array(
 					'post_type' => 'post',
 					'post_status' => 'publish',
 					'posts_per_page' => 4,
 					'order' => 'DESC',
 					'category_name' => "policial"
-				);
-				theme_get_posts($args);
+				));
+
+
+				if (!empty($policialPosts)) {
+					foreach ($policialPosts as $post) {
+						theme_post_template($post);
+					}
+				}
 				?>
 			</div>
 
@@ -322,15 +305,22 @@ if ($banner_query->have_posts()) {
 			</header>
 			<div class="l-posts__content l-posts__content--two-columns">
 				<?php
-				$args = array(
+
+				$portoPosts = theme_get_posts(array(
 					'post_type' => 'post',
 					'post_status' => 'publish',
 					'posts_per_page' => 4,
 					'order' => 'DESC',
 					'category_name' => "porto-ferreira",
 					'category__not_in' => array(get_category_by_slug('policial')->term_id)
-				);
-				theme_get_posts($args);
+				));
+
+
+				if (!empty($portoPosts)) {
+					foreach ($portoPosts as $post) {
+						theme_post_template($post);
+					}
+				}
 				?>
 			</div>
 			<footer class="l-posts__footer">
@@ -392,41 +382,12 @@ if ($banner_query->have_posts()) {
 		echo $html;
 		?>
 
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7379900084732959" crossorigin="anonymous"></script>
+		<script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7379900084732959" crossorigin="anonymous"></script>
 		<!-- Home -->
 		<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7379900084732959" data-ad-slot="2445057361" data-ad-format="auto" data-full-width-responsive="true"></ins>
-		<script>
+		<script defer>
 			(adsbygoogle = window.adsbygoogle || []).push({});
 		</script>
-
-
-		<?php
-		/* 		echo '<section class="l-page-home__posts-links">';
-		echo '<h2 class="l-page-home__title">Geral</h2>';
-		$args = array(
-			'post_type' => 'post',
-			'post_status' => 'publish',
-			'posts_per_page' => 6,
-			'order' => 'DESC',
-			'category_name' => "geral"
-		);
-		$query = new WP_Query($args);
-		if ($query->have_posts()) {
-			$i = 1;
-			while ($query->have_posts()) {
-				$query->the_post();
-				$post = array(
-					'titulo' => get_the_title(),
-					'link' => get_permalink(),
-				);
-
-				echo '<a href="' . $post["link"] . '" title="' . $post["titulo"] . '"><h3>' . $post["titulo"] . '</h3></a>';
-			}
-		}
-		wp_reset_postdata();
-		echo '</section>'; */
-		?>
-
 
 		<div class="l-page-home__posts-two-columns">
 			<div class="l-posts">
@@ -435,14 +396,21 @@ if ($banner_query->have_posts()) {
 				</header>
 				<div class="l-posts__content">
 					<?php
-					$args = array(
+
+					$saudePosts = theme_get_posts(array(
 						'post_type' => 'post',
 						'post_status' => 'publish',
 						'posts_per_page' => 4,
 						'order' => 'DESC',
 						'category_name' => "saude"
-					);
-					theme_get_posts($args);
+					));
+
+
+					if (!empty($saudePosts)) {
+						foreach ($saudePosts as $post) {
+							theme_post_template($post);
+						}
+					}
 					?>
 				</div>
 				<footer class="l-posts__footer">
@@ -456,14 +424,20 @@ if ($banner_query->have_posts()) {
 				</header>
 				<div class="l-posts__content">
 					<?php
-					$args = array(
+					$lazerPosts = theme_get_posts(array(
 						'post_type' => 'post',
 						'post_status' => 'publish',
 						'posts_per_page' => 4,
 						'order' => 'DESC',
 						'category_name' => "lazer-cultura"
-					);
-					theme_get_posts($args);
+					));
+
+
+					if (!empty($lazerPosts)) {
+						foreach ($lazerPosts as $post) {
+							theme_post_template($post);
+						}
+					}
 					?>
 				</div>
 				<footer class="l-posts__footer">
@@ -518,14 +492,20 @@ if ($banner_query->have_posts()) {
 			</header>
 			<div class="l-posts__content l-posts__content--two-columns">
 				<?php
-				$args = array(
+				$regiaoPosts = theme_get_posts(array(
 					'post_type' => 'post',
 					'post_status' => 'publish',
 					'posts_per_page' => 4,
 					'order' => 'DESC',
 					'category_name' => "regiao"
-				);
-				theme_get_posts($args);
+				));
+
+
+				if (!empty($regiaoPosts)) {
+					foreach ($regiaoPosts as $post) {
+						theme_post_template($post);
+					}
+				}
 				?>
 			</div>
 			<footer class="l-posts__footer">

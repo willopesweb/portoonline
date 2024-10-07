@@ -34,6 +34,11 @@ window.addEventListener("DOMContentLoaded", () => {
       perPage: 1,
       keyboard: true,
       autoplay: true,
+      breakpoints: {
+        599: {
+          destroy: true,
+        },
+      }
     });
 
     newsCarousel.mount();

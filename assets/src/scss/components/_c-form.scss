@@ -1,0 +1,89 @@
+$component-name: c-form;
+
+.#{$component-name} {
+	display: flex;
+	flex-direction: column;
+	max-width: rem(600);
+
+	&__label {
+		display: flex;
+		flex-direction: column;
+		font-size: rem(14);
+		position: relative;
+		width: 100%;
+
+		&:has(input[required]) {
+			span {
+				&::after {
+					color: red;
+					content: "*";
+					margin-left: rem(5);
+				}
+			}
+		}
+
+		span {
+			font-size: rem(18);
+			font-weight: 700;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		gap: $global-module-size;
+	}
+
+	&__captcha {
+		display: grid;
+		gap: 0 $global-module-size / 2;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: auto rem(40);
+		margin-bottom: $global-module-size;
+		max-width: rem(600);
+
+		@include breakpoint(600) {
+			grid-template-columns: 60% 40%;
+		}
+
+		span {
+			grid-column: 1 / 3;
+		}
+
+		input,
+		img {
+			height: 100%;
+		}
+	}
+
+	textarea,
+	input:not([type="submit"]),
+	select,
+	option {
+		border: 2px solid #000;
+		border-radius: 0;
+		font-size: rem(16);
+		margin-bottom: rem(10);
+
+		&::placeholder {
+			color: #7c7c7c;
+			font-family: Montserrat, sans-serif;
+			text-transform: uppercase;
+		}
+
+		&:focus,
+		&:active {
+			border-color: var(--theme-color-3);
+			box-shadow: none;
+			outline: none;
+		}
+	}
+
+	&__group {
+		display: grid;
+
+		@include breakpoint(600) {
+			gap: $global-module-size;
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+}

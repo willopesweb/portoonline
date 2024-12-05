@@ -19,7 +19,13 @@
           'order' => 'DESC',
           'category_name' => "regiao"
         );
-        theme_get_posts($args);
+        $postsSidebar =  theme_get_posts($args);
+
+        if (!empty($postsSidebar)) {
+          foreach ($postsSidebar as $post) {
+            theme_post_template($post);
+          }
+        }
         ?>
       </div>
     </div>

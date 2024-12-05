@@ -155,16 +155,8 @@ $layout-name: l-page-home;
 	}
 
 	&__video-content {
-		padding-bottom: 56.25%;
-		position: relative;
-		width: 100%;
-
 		iframe {
-			border: 0;
-			height: 100%;
-			left: 0;
-			position: absolute;
-			top: 0;
+			aspect-ratio: 16 / 9;
 			width: 100%;
 		}
 	}

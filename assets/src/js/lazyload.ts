@@ -1,9 +1,25 @@
+function getYouTubeVideoId(url: string): string | null {
+  try {
+    const parsedUrl = new URL(url);
+    // Verifica se o hostname corresponde ao YouTube
+    if (parsedUrl.hostname === 'www.youtube.com' || parsedUrl.hostname === 'youtube.com') {
+      return parsedUrl.searchParams.get('v'); // Retorna o parâmetro 'v' (ID do vídeo)
+    }
+    // Suporte para URLs encurtadas do YouTube (youtu.be)
+    if (parsedUrl.hostname === 'youtu.be') {
+      return parsedUrl.pathname.slice(1); // Retorna o caminho sem a barra inicial
+    }
+  } catch (error) {
+    console.error("Invalid URL", error);
+  }
+  return null; // Retorna null se não for uma URL válida ou não conter um ID
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   let lazyloadImages: NodeListOf<HTMLImageElement>;
 
   if ("IntersectionObserver" in window && typeof document !== "undefined") {
     lazyloadImages = document.querySelectorAll(".lazy");
-    console.log("IntersectionObserver");
     const imageObserver = new IntersectionObserver(function (
       entries,
       observer
@@ -53,14 +69,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   const videoContainers = document.querySelectorAll(
-    ".l-page-home__video-iframe"
+    ".js-lazy-iframe-video"
   );
   if (!videoContainers || videoContainers.length === 0) return;
   videoContainers.forEach((container: Element) => {
     const videoId = container.getAttribute("data-video-id");
-    if (videoId) {
+    const youtubeId = videoId ? getYouTubeVideoId(videoId) : null;
+    console.log(videoId);
+    console.log(youtubeId);
+    if (youtubeId) {
       const iframe = document.createElement("iframe");
-      iframe.setAttribute("src", `https://www.youtube.com/embed/${videoId}`);
+      iframe.setAttribute("src", `https://www.youtube.com/embed/${youtubeId}`);
       iframe.setAttribute("frameborder", "0");
       iframe.setAttribute("allowfullscreen", "");
       container.appendChild(iframe);

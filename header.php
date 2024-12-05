@@ -44,18 +44,24 @@
       <?php
       echo slides_topo_shortcode();
       ?>
-      <nav class="l-header__topmenu">
-        <?php
-        wp_nav_menu([
-          'menu' => 'Institucional',
-          'container' => 'ul',
-          'menu_class' => 'l-header__topmenu-content',
-          'menu_id' => 'topmenu',
-          'container_aria_label' => 'main navigation'
-        ]);
-        ?>
-        <?= theme_social_networks() ?>
-      </nav>
+      <div class="l-header__subheader">
+        <a href="<?= get_site_url() ?>/categoria/etv" class="l-header__tv-logo" title="Porto Ferreira Online TV">
+          <img width="100" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/tv.png" alt="Porto Ferreira Online TV" />
+        </a>
+        <nav class="l-header__topmenu">
+          <?php
+          wp_nav_menu([
+            'menu' => 'Institucional',
+            'container' => 'ul',
+            'menu_class' => 'l-header__topmenu-content',
+            'menu_id' => 'topmenu',
+            'container_aria_label' => 'main navigation'
+          ]);
+          ?>
+          <?= theme_social_networks() ?>
+        </nav>
+      </div>
+
     </div>
   </header>
 

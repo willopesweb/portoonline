@@ -52,7 +52,7 @@ function videos_shortcode()
       echo '<section class="l-page-home__video">';
       echo '<h2 class="l-page-home__title">' . $custom['titulo'] . '</h2>';
       echo '<div class="l-page-home__video-content">';
-      echo '<div class="l-page-home__video-iframe" data-video-id="' . $custom['video'] . '"></div>';
+      echo '<div class="l-page-home__video-iframe js-lazy-iframe-video" data-video-id="' . $custom['video'] . '"></div>';
       echo '</div>';
       echo '</section>';
     }

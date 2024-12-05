@@ -32,6 +32,11 @@ $component-name: c-post;
 		}
 	}
 
+	&__video iframe {
+		aspect-ratio: 16 / 9;
+		width: 80%;
+	}
+
 	&__header {
 		padding: $global-module-size / 2 $global-module-size / 2 0 $global-module-size / 2;
 	}

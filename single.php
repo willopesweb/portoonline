@@ -42,16 +42,13 @@ $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria
 				'categoria_pai' => isset($parent_category_id) ? get_cat_name($parent_category_id) : "",
 				'categoria_pai_link' => isset($parent_category_id) ? get_category_link($parent_category_id) : "",
 				'link' => get_permalink(),
-				'comentarios' => get_comments_number()
+				'comentarios' => get_comments_number(),
+				'video' => get_field("video_youtube")
 			);
 
 			$html = "";
 			$html .= '<div class="c-post">';
-			if ($post_info['imagem']) {
-				$html .= '<div class="c-post__image">';
-				$html .= '<img class="lazy" width="600" height="590" data-src="' . $post_info['imagem'] . '" alt="' . $post_info['titulo'] . '" />';
-				$html .= '</div>';
-			};
+
 			$html .= '<header class="c-post__header">';
 			$html .= '<ul class="c-post__categories">';
 			if ($post_info['categoria']) {
@@ -71,6 +68,15 @@ $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria
 			}
 			$html .= "</div>";
 			$html .= '</header>';
+
+			if ($post_info["video"]) {
+				$html .= '<div style="padding:10px" class="c-post__video js-lazy-iframe-video" data-video-id="' . $post_info['video'] . '"></div>';
+			} else if ($post_info['imagem']) {
+				$html .= '<div class="c-post__image" style="padding:10px">';
+				$html .= '<img class="lazy" width="600" height="590" data-src="' . $post_info['imagem'] . '" alt="' . $post_info['titulo'] . '" />';
+				$html .= '</div>';
+			};
+
 			$html .= '</div>';
 
 			echo $html;
@@ -91,8 +97,6 @@ $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria
 				$permalink = rtrim($permalink, '/')
 				?>
 				<a class="icon-facebook" href="#" onclick="shareOnSocial('https://www.facebook.com/sharer.php?t=<?= get_the_title() ?>&amp;u=<?= $permalink ?>', 'Compartilhar no Facebook'); return false;"></a>
-				<a class="icon-twitter" data-show-count="false" href="https://twitter.com/share?ref_src=<?php echo urlencode(get_permalink()); ?>&amp;text=<?php echo urlencode(get_the_title()); ?>&amp;url=<?php echo urlencode(get_permalink()); ?>" onclick="shareOnSocial(this.href, 'Compartilhar no Twitter'); return false;"></a>
-				<!-- <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
 				<a class="icon-linkedin" href="#" onclick="shareOnSocial('https://www.linkedin.com/shareArticle?url=<?= $permalink ?>&amp;title=<?= get_the_title() ?>', 'Compartilhar no LinkedIn'); return false;"></a>
 				<a class="icon-whatsapp" href="whatsapp://send?text=<?= get_the_title() ?> - <?= get_permalink() ?>" target="_blank"></a>
 			</div>

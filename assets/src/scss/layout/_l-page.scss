@@ -85,12 +85,17 @@ $layout-name: l-page;
 			max-width: none;
 		}
 
-		& > .c-post {
+		&>.c-post {
 			box-shadow: initial;
 
-			.c-post__title {
-				@include breakpoint(600) {
+
+			@include breakpoint(600) {
+				.c-post__title {
 					font-size: rem(32);
+				}
+
+				.c-post__image {
+					max-height: none;
 				}
 			}
 		}

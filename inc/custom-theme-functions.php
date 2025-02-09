@@ -177,6 +177,7 @@ function theme_get_posts($args)
         'titulo' => resume_text(get_the_title(), 80),
         'imagem' => get_the_post_thumbnail_url(get_the_ID(), 'medium_large'),
         'imagem_mobile' => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
+        'video' => get_field('video_youtube'),
         'data' => get_the_date(),
         'descricao' => get_the_excerpt(),
         'categoria' => array(get_cat_name($category_id), get_category_link($category_id)),
@@ -194,15 +195,93 @@ function theme_get_posts($args)
   return $posts;
 }
 
+function theme_get_banners($banner_type)
+{
+  if (empty($banner_type) || !is_string($banner_type)) {
+    return;
+  }
+
+  $args = array(
+    'post_type' => $banner_type,
+    'post_status' => 'publish',
+    'posts_per_page' => -1,
+    'order' => 'ASC',
+    'orderby' => 'meta_value_num',
+    'meta_key' => 'ordem',
+    'meta_query' => array(
+      array(
+        'key' => 'ativo',
+        'value' => '0',
+        'compare' => '!='
+      )
+    )
+  );
+
+  set_default_order_value($banner_type);
+
+  $query = new WP_Query($args);
+  if ($query->have_posts()) {
+    while ($query->have_posts()) {
+      $query->the_post();
+      $custom = array(
+        'titulo' => get_the_title(),
+        'imagem' => get_field("imagem"),
+        'link' => get_field("link"),
+        'exibir_ate' => get_field("exibir_ate"),
+        'ordem' => get_field("ordem") ? get_field("ordem") : 1
+      );
+
+      $custom_date_string = $custom["exibir_ate"];
+      $custom_date = $custom_date_string
+        ? DateTime::createFromFormat('d/m/Y', $custom_date_string)
+        : null;
+
+      if (!$custom["exibir_ate"] || ($custom_date && $custom_date >= new DateTime())) {
+        echo theme_banner_template($custom);
+      }
+    }
+  }
+  wp_reset_postdata();
+}
+
+function set_default_order_value($banner_type)
+{
+  $args = array(
+    'post_type' => $banner_type,
+    'posts_per_page' => -1,
+    'meta_query' => array(
+      array(
+        'key' => 'ordem',
+        'compare' => 'NOT EXISTS' // Seleciona posts sem o campo "ordem".
+      )
+    )
+  );
+
+  $query = new WP_Query($args);
+
+  if ($query->have_posts()) {
+    while ($query->have_posts()) {
+      $query->the_post();
+      update_post_meta(get_the_ID(), 'ordem', 1); // Define o valor padrão.
+    }
+  }
+  wp_reset_postdata();
+}
+
+
 //Template para os posts
 function theme_post_template($post)
 {
+
   echo '<article class="c-post">';
   echo '<a class="c-post__image" href="' . $post['link'] . '" title="' . $post['titulo'] . '">';
+  if (isset($post['video'])) {
+    echo '<div class="c-post__video js-lazy-iframe-video" data-video-id="' . $post['video'] . '"></div>';
+  }
   echo '<picture>';
-  if ($post['imagem_mobile']) {
+  if (isset($post['imagem_mobile']) && $post['imagem_mobile']) {
     echo '<source media="(max-width:600px)" srcset="' . $post["imagem_mobile"] . '">';
-  };
+  }
   echo '<img width="530" height="300" class="lazy" data-src="' . $post['imagem'] . '" alt="' . $post['titulo'] . '" />';
   echo '</picture>';
   echo '</a>';

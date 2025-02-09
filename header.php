@@ -98,7 +98,9 @@
               ));
 
               foreach ($categories as $category) {
-                echo '<option value="' . $category->slug . '">' . $category->name . '</option>';
+                if ($category->slug !== "sem-categoria") {
+                  echo '<option value="' . $category->slug . '">' . $category->name . '</option>';
+                }
               }
               ?>
             </select>

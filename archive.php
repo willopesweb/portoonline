@@ -94,8 +94,9 @@ if ($banner_query->have_posts()) {
 				$post = array(
 					'titulo' => resume_text(get_the_title(), 80),
 					'imagem' => get_the_post_thumbnail_url(),
+					'video' => get_field('video_youtube'),
 					'data' => get_the_date(),
-					'descricao' => get_the_excerpt(),
+					'descricao' => has_category('obituario-porto-ferreira') ? apply_filters('the_content', get_the_content()) : get_the_excerpt(),
 					'categoria' => array(get_cat_name($category_id), get_category_link($category_id)),
 					'categoria_pai' => isset($parent_category_id) ? get_cat_name($parent_category_id) : "",
 					'categoria_pai_link' => isset($parent_category_id) ? get_category_link($parent_category_id) : "",

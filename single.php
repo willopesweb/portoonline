@@ -4,15 +4,10 @@ get_header();
 
 function check_gallery_shortcode($content)
 {
-	// Verifica se o shortcode [rl_gallery] está presente no conteúdo
-	if (has_shortcode($content, 'rl_gallery')) {
-		// Usa expressão regular para capturar o ID do shortcode
-		if (preg_match('/\[rl_gallery id="(\d+)"\]/', $content, $matches)) {
-			$gallery_id = $matches[1]; // Salva o valor do ID
-			return $gallery_id; // Retorna o ID do gallery
-		}
+	if (preg_match('/\[rl_gallery id="(\d+)"\]/', $content, $matches)) {
+		$gallery_id = $matches[1]; // Salva o valor do ID
+		return $gallery_id; // Retorna o ID do gallery
 	}
-	return null;
 }
 
 $post_id = get_the_ID();
@@ -82,7 +77,10 @@ $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria
 			echo $html;
 
 			echo '<div class="l-page__single-content"/>';
-			echo the_content();
+			if (!$gallery_shortcode_id) {
+				echo the_content();
+			}
+
 			if ($gallery_id) {
 				theme_custom_gallery($gallery_id);
 			}

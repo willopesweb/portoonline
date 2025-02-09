@@ -13,6 +13,7 @@ require "custom-post-types/banners-eventos.php";
 require "custom-post-types/banners-obituario.php";
 require "custom-post-types/banners-saude.php";
 require "custom-post-types/banners-vagas.php";
+require "custom-post-types/banners-etv.php";
 
 // Conteúdo Página Inicial (Home)
 require "custom-post-types/banners-home-content.php";

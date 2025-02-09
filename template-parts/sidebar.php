@@ -3,8 +3,10 @@
   if (
     is_single()
     && !has_category('obituario-porto-ferreira')
-    && !has_category('vagas-de-empregos')
+    && !has_category('pat-vagas-de-empregos')
     && !has_category('eventos')
+    && !has_category('etv')
+    && !has_category('saude')
   ) { ?>
     <div class="l-posts">
       <header class="l-posts__header">
@@ -32,16 +34,18 @@
   <?php } ?>
   <div class="l-sidebar__banners">
     <?php
-    if (has_category('vagas-de-empregos')) {
-      echo banners_vagas_shortcode();
+    if ((strpos($_SERVER['REQUEST_URI'], 'empregos') !== false) || (is_single() && has_category('pat-vagas-de-empregos'))) {
+      echo theme_get_banners("banners_vagas");
+    } else if ((strpos($_SERVER['REQUEST_URI'], 'etv') !== false) || (is_single() && has_category('etv'))) {
+      echo theme_get_banners("banners_etv");
     } else if ((strpos($_SERVER['REQUEST_URI'], 'obituario') !== false) || (is_single() && has_category('obituario-porto-ferreira'))) {
-      echo banners_obituario_shortcode();
+      echo theme_get_banners("banners_obituario");
     } else if ((strpos($_SERVER['REQUEST_URI'], 'eventos') !== false) || (is_single() && has_category('eventos'))) {
-      echo banners_eventos_shortcode();
+      echo theme_get_banners("banners_eventos");
     } else if ((strpos($_SERVER['REQUEST_URI'], 'saude') !== false) || (is_single() && has_category('saude'))) {
-      echo banners_saude_shortcode();
+      echo theme_get_banners("banners_saude");
     } else {
-      echo banners_shortcode();
+      echo theme_get_banners("banners");
     }
     ?>
   </div>

@@ -1,5 +1,11 @@
 $component-name: c-post;
 
+body.category-obituario-porto-ferreira {
+	.c-post__button {
+		display: none;
+	}
+}
+
 .#{$component-name} {
 	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 	color: var(--text-color-1);
@@ -19,22 +25,33 @@ $component-name: c-post;
 	}
 
 	&__image {
-		max-height: rem(250);
-
-		@include breakpoint(600) {
-			max-height: none;
-		}
+		max-height: rem(270);
+		overflow: hidden;
+		position: relative;
 
 		img {
 			height: 100%;
 			object-fit: cover;
 			width: 100%;
 		}
+
+		.c-post__video {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: z-index("above");
+			width: 100%;
+			height: 100%;
+			max-height: rem(250);
+		}
 	}
 
-	&__video iframe {
-		aspect-ratio: 16 / 9;
-		width: 80%;
+	&__video {
+
+		iframe {
+			aspect-ratio: 16 / 9;
+			width: 100%;
+		}
 	}
 
 	&__header {
@@ -76,6 +93,10 @@ $component-name: c-post;
 		font-size: rem(14);
 		line-height: 1.6rem;
 		padding: 0 rem(10);
+
+		p:has(a) {
+			display: none;
+		}
 	}
 
 	&__button {

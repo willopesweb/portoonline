@@ -46,16 +46,19 @@
       ?>
       <div class="l-header__subheader">
         <a href="<?= get_site_url() ?>/categoria/etv" class="l-header__tv-logo" title="Porto Ferreira Online TV">
-          <img width="100" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/tv.png" alt="Porto Ferreira Online TV" />
+          <img width="120" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/tv.png" alt="Porto Ferreira Online TV" />
+        </a>
+        <a href="<?= get_site_url() ?>/categoria/podcast-mulheres" class="l-header__tv-logo" title="Podcast Mulheres">
+          <img width="120" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/podmulheres.png" alt="Podcast Mulheres" />
         </a>
         <a href="<?= get_site_url() ?>/categoria/podcast-de-negocios" class="l-header__tv-logo" title="Podcast de Negócios com William Malaco">
-          <img width="100" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/podnegocios.png" alt="Podcast de Negócios com William Malaco" />
+          <img width="120" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/podnegocios.png" alt="Podcast de Negócios com William Malaco" />
         </a>
         <a href="<?= get_site_url() ?>/categoria/podcast-mais-saude" class="l-header__tv-logo" title="Podcast Mais Saúde">
-          <img width="100" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/podsaude.png" alt="Podcast Mais Saúde" />
+          <img width="150" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/podsaude.png" alt="Podcast Mais Saúde" />
         </a>
         <a href="<?= get_site_url() ?>/categoria/aqui-podcast-com-roberto-neves" class="l-header__tv-logo" title="Aqui Podcast com Roberto Neves">
-          <img width="100" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/aquipod.png" alt="Aqui Podcast com Roberto Neves" />
+          <img width="120" src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/img/aquipod.png" alt="Aqui Podcast com Roberto Neves" />
         </a>
         <nav class="l-header__topmenu">
           <?php

@@ -35,19 +35,35 @@ function register_cpt_slides_eventos()
 add_action('init', 'register_cpt_slides_eventos');
 
 
-function slides_eventos_shortcode()
+function slides_eventos_shortcode($categoria = '')
 {
+  $meta_query = array(
+    array(
+      'key'     => 'ativo',
+      'value'   => '0',
+      'compare' => '!='
+    )
+  );
+
+  // Filtro por categoria (ACF com múltiplos valores)
+  if (!empty($categoria)) {
+    $meta_query[] = array(
+      'key'     => 'categoria', // nome do campo ACF
+      'value'   => '"' . $categoria . '"',
+      'compare' => 'LIKE'
+    );
+  }
+
   $args = array(
-    'post_type' => 'slides_eventos',
-    'post_status' => 'publish',
+    'post_type'      => 'slides_eventos',
+    'post_status'    => 'publish',
     'posts_per_page' => -1,
-    'orderby' => 'rand',
-    'meta_key' => 'ativo',
-    'meta_value' => '0',
-    'meta_compare' => '!=',
+    'orderby'        => 'rand',
+    'meta_query'     => $meta_query,
   );
 
   theme_get_slides($args);
 }
+
 
 add_shortcode('slides_eventos', 'slides_eventos_shortcode');

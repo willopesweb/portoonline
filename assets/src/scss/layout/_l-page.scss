@@ -85,9 +85,8 @@ $layout-name: l-page;
 			max-width: none;
 		}
 
-		&>.c-post {
+		& > .c-post {
 			box-shadow: initial;
-
 
 			@include breakpoint(600) {
 				.c-post__title {

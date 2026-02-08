@@ -65,7 +65,17 @@ if ($banner_query->have_posts()) {
 	if (strpos($_SERVER['REQUEST_URI'], 'obituario') !== false) {
 		echo slides_obituario_shortcode();
 	} else if (strpos($_SERVER['REQUEST_URI'], 'eventos') !== false) {
-		echo slides_eventos_shortcode();
+		if (strpos($_SERVER['REQUEST_URI'], 'bares-restaurantes-e-pizzarias')) {
+			echo slides_eventos_shortcode("bares-restaurantes-e-pizzarias");
+		} else 	if (strpos($_SERVER['REQUEST_URI'], 'carnaval-de-porto-ferreira')) {
+			echo slides_eventos_shortcode("carnaval-de-porto-ferreira");
+		} else 	if (strpos($_SERVER['REQUEST_URI'], 'feira-da-fepasa')) {
+			echo slides_eventos_shortcode("feira-da-fepasa");
+		} else 	if (strpos($_SERVER['REQUEST_URI'], 'clubes-shows-e-baladas')) {
+			echo slides_eventos_shortcode("clubes-shows-e-baladas");
+		} else {
+			echo slides_eventos_shortcode();
+		}
 	} else if (strpos($_SERVER['REQUEST_URI'], 'saude') !== false) {
 		echo slides_saude_shortcode();
 	}

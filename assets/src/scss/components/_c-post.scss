@@ -90,9 +90,17 @@ body.category-obituario-porto-ferreira {
 	}
 
 	&__descricao {
+		--wp--preset--font-size--medium: 16px;
+		display: flex;
+		flex-direction: column;
 		font-size: rem(14);
+		gap: 8px;
 		line-height: 1.6rem;
 		padding: 0 rem(10);
+
+		p {
+			font-size: rem(16);
+		}
 
 		p:has(a) {
 			display: none;

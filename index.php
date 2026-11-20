@@ -9,6 +9,7 @@ $banner_query = new WP_Query(array(
 	'post_type' => 'banners',
 	'post_status' => 'publish',
 	'posts_per_page' => -1,
+	'no_found_rows' => true,
 	'meta_key' => 'ativo',
 	'meta_value' => '0',
 	'meta_compare' => '!=',
@@ -19,7 +20,7 @@ if ($banner_query->have_posts()) {
 		$banner_query->the_post();
 		$custom = array(
 			'titulo' => get_the_title(),
-			'imagem' => get_field("imagem"),
+			'imagem' => get_field("imagem", false, false), // ID do anexo
 			'link' => get_field("link"),
 			'exibir_ate' => get_field("exibir_ate"),
 		);
@@ -37,6 +38,9 @@ if ($banner_query->have_posts()) {
 	}
 	wp_reset_postdata();
 }
+
+// Banners da home (uma query; antes eram 4, uma por offset)
+$home_banners = theme_get_home_banners(5);
 
 //Posts recentes
 $recents = theme_get_posts(array(
@@ -63,7 +67,7 @@ if (!empty($recents)) {
 						foreach ($recents as $post) {
 							echo '<li class="splide__slide"><article class="c-post">';
 							echo '<a class="c-post__image" href="' . $post['link'] . '" title="' . $post['titulo'] . '">';
-							echo '<img class="lazy" width="530" height="300" data-src="' . $post['imagem'] . '" alt="' . $post['titulo'] . '" />';
+							echo theme_image($post['imagem'], 'medium_large', array('alt' => wp_strip_all_tags($post['titulo']), 'sizes' => '(max-width: 600px) 100vw, 530px', 'width' => 530, 'height' => 300));
 							echo '</a>';
 							echo '<header class="c-post__header">';
 							echo '<ul class="c-post__categories">';
@@ -138,50 +142,13 @@ if (!empty($recents)) {
 		//Banners mobile
 		if (count($banners) > 0) {
 			echo '<div class="l-page-home__banners-mobile">';
-			echo theme_banner_template($banners[0]);
-			echo theme_banner_template($banners[1]);
+			echo theme_banner_template($banners[0] ?? null);
+			echo theme_banner_template($banners[1] ?? null);
 			echo "</div>";
 		}
 		?>
 
-		<?php
-		$args = array(
-			'post_type' => 'banners_home',
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-			'order' => 'DESC',
-		);
-		$html = '';
-		$query = new WP_Query($args);
-		if ($query->have_posts()) {
-			$i = 1;
-			while ($query->have_posts()) {
-				$query->the_post();
-				$custom = array(
-					'titulo' => get_the_title(),
-					'imagem' => get_field("imagem"),
-					'link' => get_field("link"),
-				);
-
-				if ($custom["link"]) {
-					$html .= '<a target="_blank" rel="nofollow" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-page-home__banner">';
-				} else {
-					$html .= '<article class="l-page-home__banner">';
-					$html .= '<h3 class="screen-readers-only">' . $custom['titulo'] . '</h3>';
-				}
-
-				$html .= '<img loading="lazy" width="1000" height="100" src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '"/>';
-
-				if ($custom["link"]) {
-					$html .= '</a>';
-				} else {
-					$html .= '</article>';
-				}
-			}
-		}
-		wp_reset_postdata();
-		echo $html;
-		?>
+		<?= theme_home_banner_template($home_banners[0] ?? null) ?>
 
 		<section class="l-posts">
 			<header class="l-posts__header">
@@ -215,51 +182,13 @@ if (!empty($recents)) {
 		//Banners mobile
 		if (count($banners) > 0) {
 			echo '<div class="l-page-home__banners-mobile">';
-			echo theme_banner_template($banners[2]);
-			echo theme_banner_template($banners[3]);
+			echo theme_banner_template($banners[2] ?? null);
+			echo theme_banner_template($banners[3] ?? null);
 			echo "</div>";
 		}
 		?>
 
-		<?php
-		$args = array(
-			'post_type' => 'banners_home',
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-			'offset' => 2,
-			'order' => 'DESC',
-		);
-		$html = '';
-		$query = new WP_Query($args);
-		if ($query->have_posts()) {
-			$i = 1;
-			while ($query->have_posts()) {
-				$query->the_post();
-				$custom = array(
-					'titulo' => get_the_title(),
-					'imagem' => get_field("imagem"),
-					'link' => get_field("link"),
-				);
-
-				if ($custom["link"]) {
-					$html .= '<a target="_blank" rel="nofollow" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-page-home__banner">';
-				} else {
-					$html .= '<article class="l-page-home__banner">';
-					$html .= '<h3 class="screen-readers-only">' . $custom['titulo'] . '</h3>';
-				}
-
-				$html .= '<img loading="lazy" width="1000" height="100" src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '"/>';
-
-				if ($custom["link"]) {
-					$html .= '</a>';
-				} else {
-					$html .= '</article>';
-				}
-			}
-		}
-		wp_reset_postdata();
-		echo $html;
-		?>
+		<?= theme_home_banner_template($home_banners[2] ?? null) ?>
 
 		<section class="l-posts">
 			<header class="l-posts__header">
@@ -293,8 +222,8 @@ if (!empty($recents)) {
 		//Banners mobile
 		if (count($banners) > 0) {
 			echo '<div class="l-page-home__banners-mobile">';
-			echo theme_banner_template($banners[4]);
-			echo theme_banner_template($banners[5]);
+			echo theme_banner_template($banners[4] ?? null);
+			echo theme_banner_template($banners[5] ?? null);
 			echo "</div>";
 		}
 		?>
@@ -332,60 +261,21 @@ if (!empty($recents)) {
 		//Banners mobile
 		if (count($banners) > 0) {
 			echo '<div class="l-page-home__banners-mobile">';
-			echo theme_banner_template($banners[6]);
-			echo theme_banner_template($banners[7]);
+			echo theme_banner_template($banners[6] ?? null);
+			echo theme_banner_template($banners[7] ?? null);
 			echo "</div>";
 			echo '<div class="l-page-home__banners-mobile">';
-			echo theme_banner_template($banners[8]);
-			echo theme_banner_template($banners[9]);
+			echo theme_banner_template($banners[8] ?? null);
+			echo theme_banner_template($banners[9] ?? null);
 			echo "</div>";
 		}
 		?>
 
-		<?php
-		$args = array(
-			'post_type' => 'banners_home',
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-			'offset' => 3,
-			'order' => 'DESC',
-		);
-		$html = '';
-		$query = new WP_Query($args);
-		if ($query->have_posts()) {
-			$i = 1;
-			while ($query->have_posts()) {
-				$query->the_post();
-				$custom = array(
-					'titulo' => get_the_title(),
-					'imagem' => get_field("imagem"),
-					'link' => get_field("link"),
-				);
+		<?= theme_home_banner_template($home_banners[3] ?? null) ?>
 
-				if ($custom["link"]) {
-					$html .= '<a target="_blank" rel="nofollow" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-page-home__banner">';
-				} else {
-					$html .= '<article class="l-page-home__banner">';
-					$html .= '<h3 class="screen-readers-only">' . $custom['titulo'] . '</h3>';
-				}
-
-				$html .= '<img loading="lazy" width="1000" height="100" src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '"/>';
-
-				if ($custom["link"]) {
-					$html .= '</a>';
-				} else {
-					$html .= '</article>';
-				}
-			}
-		}
-		wp_reset_postdata();
-		echo $html;
-		?>
-
-		<script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7379900084732959" crossorigin="anonymous"></script>
 		<!-- Home -->
 		<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7379900084732959" data-ad-slot="2445057361" data-ad-format="auto" data-full-width-responsive="true"></ins>
-		<script defer>
+		<script>
 			(adsbygoogle = window.adsbygoogle || []).push({});
 		</script>
 
@@ -446,45 +336,7 @@ if (!empty($recents)) {
 			</div>
 		</div>
 
-		<?php
-		$args = array(
-			'post_type' => 'banners_home',
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-			'offset' => 4,
-			'order' => 'DESC',
-		);
-		$html = '';
-		$query = new WP_Query($args);
-		if ($query->have_posts()) {
-			$i = 1;
-			while ($query->have_posts()) {
-				$query->the_post();
-				$custom = array(
-					'titulo' => get_the_title(),
-					'imagem' => get_field("imagem"),
-					'link' => get_field("link"),
-				);
-
-				if ($custom["link"]) {
-					$html .= '<a target="_blank" rel="nofollow" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-page-home__banner">';
-				} else {
-					$html .= '<article class="l-page-home__banner">';
-					$html .= '<h3 class="screen-readers-only">' . $custom['titulo'] . '</h3>';
-				}
-
-				$html .= '<img loading="lazy" width="1000" height="100" src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '"/>';
-
-				if ($custom["link"]) {
-					$html .= '</a>';
-				} else {
-					$html .= '</article>';
-				}
-			}
-		}
-		wp_reset_postdata();
-		echo $html;
-		?>
+		<?= theme_home_banner_template($home_banners[4] ?? null) ?>
 
 		<div class="l-posts">
 			<header class="l-posts__header">

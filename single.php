@@ -16,7 +16,12 @@ $gallery_shortcode_id = check_gallery_shortcode($content);
 $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria_id");
 ?>
 
-<script defer src="<?= get_stylesheet_directory_uri() . '/' . ASSETS_DIR ?>/js/gallery.js"></script>
+<?php
+// fslightbox (~34KB) só quando o post tem galeria; impresso no wp_footer
+if ($gallery_id) {
+	wp_enqueue_script('theme-gallery', get_template_directory_uri() . '/' . ASSETS_DIR . '/js/gallery.js', [], theme_asset_version('js/gallery.js'), ['strategy' => 'defer', 'in_footer' => true]);
+}
+?>
 <div class="l-page__main" style="padding-top:40px">
 	<main id="content">
 		<article class="l-page__single">
@@ -31,7 +36,7 @@ $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria
 			}
 			$post_info = array(
 				'titulo' => get_the_title(),
-				'imagem' => get_the_post_thumbnail_url(),
+				'imagem' => get_post_thumbnail_id(),
 				'data' => get_the_date(),
 				'categoria' => array(get_cat_name($category_id), get_category_link($category_id)),
 				'categoria_pai' => isset($parent_category_id) ? get_cat_name($parent_category_id) : "",
@@ -68,7 +73,13 @@ $gallery_id = $gallery_shortcode_id ? $gallery_shortcode_id : get_field("galeria
 				$html .= '<div style="padding:10px" class="c-post__video js-lazy-iframe-video" data-video-id="' . $post_info['video'] . '"></div>';
 			} else if ($post_info['imagem']) {
 				$html .= '<div class="c-post__image" style="padding:10px">';
-				$html .= '<img class="lazy" width="600" height="590" data-src="' . $post_info['imagem'] . '" alt="' . $post_info['titulo'] . '" />';
+				// Imagem de destaque é o LCP do post: sem lazy e com prioridade alta
+				$html .= theme_image($post_info['imagem'], 'large', array(
+					'alt' => wp_strip_all_tags($post_info['titulo']),
+					'loading' => 'eager',
+					'fetchpriority' => 'high',
+					'sizes' => '(max-width: 640px) 100vw, 640px',
+				));
 				$html .= '</div>';
 			};
 

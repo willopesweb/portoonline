@@ -1,5 +1,52 @@
 <?php
 
+/**
+ * Gera a tag <img> de uma imagem com srcset/sizes, width/height reais e lazy-load nativo.
+ *
+ * $image pode ser o ID do anexo (recomendado: get_field('imagem', false, false)),
+ * o array de imagem do ACF ou uma URL (fallback sem srcset).
+ * Por padrão a imagem é lazy; para imagens acima da dobra passe
+ * ['loading' => 'eager', 'fetchpriority' => 'high'].
+ */
+function theme_image($image, $size = 'full', $attr = array())
+{
+  if (empty($image)) {
+    return '';
+  }
+
+  $attr = array_merge(array('loading' => 'lazy', 'decoding' => 'async'), $attr);
+
+  $attachment_id = 0;
+  if (is_numeric($image)) {
+    $attachment_id = (int) $image;
+  } elseif (is_array($image)) {
+    $attachment_id = (int) ($image['ID'] ?? $image['id'] ?? 0);
+  }
+
+  if ($attachment_id) {
+    // width/height vêm do próprio anexo; repassá-los duplicaria os atributos
+    $wp_attr = $attr;
+    unset($wp_attr['width'], $wp_attr['height']);
+    $html = wp_get_attachment_image($attachment_id, $size, false, $wp_attr);
+    if ($html) {
+      return $html;
+    }
+  }
+
+  // Fallback: URL simples (ou anexo inexistente)
+  $src = is_array($image) ? ($image['url'] ?? '') : (is_string($image) && !is_numeric($image) ? $image : '');
+  if (!$src) {
+    return '';
+  }
+
+  $html = '<img src="' . esc_url($src) . '"';
+  foreach ($attr as $name => $value) {
+    if ($value === false || $value === null) continue;
+    $html .= ' ' . $name . '="' . esc_attr($value) . '"';
+  }
+  return $html . ' />';
+}
+
 // Galeria personalizada
 function theme_custom_gallery($id)
 {
@@ -23,10 +70,9 @@ function theme_custom_gallery($id)
     echo  '<div class="c-gallery">';
     foreach ($gallery_images as $image) {
       $image_url = esc_url(wp_get_attachment_image_url($image, 'medium_large'));
-      $thumbnail_url = esc_url(wp_get_attachment_image_url($image, "thumbnail"));
       echo  '<div class="c-gallery__item">';
       echo  '<a data-fslightbox="" href="' . $image_url . '" class="c-gallery__link">';
-      echo  '<img class="lazy" data-src="' . $thumbnail_url . '" width="300" height="300" alt="">';
+      echo  theme_image($image, 'thumbnail', array('alt' => '', 'width' => 300, 'height' => 300));
       echo  '</a>';
       echo '</div>';
     }
@@ -156,6 +202,9 @@ function theme_get_posts($args)
 {
   if (!$args) return [];
 
+  // Listas sem paginação: evita o SQL_CALC_FOUND_ROWS
+  $args += array('no_found_rows' => true);
+
   $query = new WP_Query($args);
   $posts = array();  // Array para armazenar os posts
 
@@ -175,8 +224,7 @@ function theme_get_posts($args)
       // Criação do array de um post
       $post = array(
         'titulo' => resume_text(get_the_title(), 80),
-        'imagem' => get_the_post_thumbnail_url(get_the_ID(), 'medium_large'),
-        'imagem_mobile' => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
+        'imagem' => get_post_thumbnail_id(),
         'video' => get_field('video_youtube'),
         'data' => get_the_date(),
         'descricao' => get_the_excerpt(),
@@ -205,6 +253,7 @@ function theme_get_banners($banner_type)
     'post_type' => $banner_type,
     'post_status' => 'publish',
     'posts_per_page' => -1,
+    'no_found_rows' => true,
     'order' => 'ASC',
     'orderby' => 'meta_value_num',
     'meta_key' => 'ordem',
@@ -217,15 +266,13 @@ function theme_get_banners($banner_type)
     )
   );
 
-  set_default_order_value($banner_type);
-
   $query = new WP_Query($args);
   if ($query->have_posts()) {
     while ($query->have_posts()) {
       $query->the_post();
       $custom = array(
         'titulo' => get_the_title(),
-        'imagem' => get_field("imagem"),
+        'imagem' => get_field("imagem", false, false), // ID do anexo
         'link' => get_field("link"),
         'exibir_ate' => get_field("exibir_ate"),
         'ordem' => get_field("ordem") ? get_field("ordem") : 1
@@ -244,29 +291,53 @@ function theme_get_banners($banner_type)
   wp_reset_postdata();
 }
 
-function set_default_order_value($banner_type)
+// Tipos de banner ordenados pelo campo "ordem"
+function theme_banner_post_types()
 {
-  $args = array(
-    'post_type' => $banner_type,
+  return array('banners', 'banners_vagas', 'banners_etv', 'banners_obituario', 'banners_eventos', 'banners_saude');
+}
+
+// Garante o campo "ordem" ao salvar um banner (antes era verificado a cada page view).
+// Prioridade 20 para rodar depois do ACF salvar os campos.
+function theme_banner_default_order($post_id, $post)
+{
+  if (wp_is_post_revision($post_id) || !in_array($post->post_type, theme_banner_post_types(), true)) {
+    return;
+  }
+  if (get_post_meta($post_id, 'ordem', true) === '') {
+    update_post_meta($post_id, 'ordem', 1);
+  }
+}
+add_action('save_post', 'theme_banner_default_order', 20, 2);
+
+// Migração única: define "ordem" = 1 nos banners antigos que ainda não têm o campo
+function theme_banner_default_order_migration()
+{
+  if (get_option('theme_banner_ordem_migrated')) {
+    return;
+  }
+
+  $ids = get_posts(array(
+    'post_type' => theme_banner_post_types(),
+    'post_status' => 'any',
     'posts_per_page' => -1,
+    'fields' => 'ids',
+    'no_found_rows' => true,
     'meta_query' => array(
       array(
         'key' => 'ordem',
-        'compare' => 'NOT EXISTS' // Seleciona posts sem o campo "ordem".
+        'compare' => 'NOT EXISTS'
       )
     )
-  );
+  ));
 
-  $query = new WP_Query($args);
-
-  if ($query->have_posts()) {
-    while ($query->have_posts()) {
-      $query->the_post();
-      update_post_meta(get_the_ID(), 'ordem', 1); // Define o valor padrão.
-    }
+  foreach ($ids as $id) {
+    update_post_meta($id, 'ordem', 1);
   }
-  wp_reset_postdata();
+
+  update_option('theme_banner_ordem_migrated', 1);
 }
+add_action('init', 'theme_banner_default_order_migration', 20);
 
 
 //Template para os posts
@@ -275,15 +346,16 @@ function theme_post_template($post)
 
   echo '<article class="c-post">';
   echo '<a class="c-post__image" href="' . $post['link'] . '" title="' . $post['titulo'] . '">';
-  if (isset($post['video'])) {
+  if (!empty($post['video'])) {
     echo '<div class="c-post__video js-lazy-iframe-video" data-video-id="' . $post['video'] . '"></div>';
   }
-  echo '<picture>';
-  if (isset($post['imagem_mobile']) && $post['imagem_mobile']) {
-    echo '<source media="(max-width:600px)" srcset="' . $post["imagem_mobile"] . '">';
-  }
-  echo '<img width="530" height="300" class="lazy" data-src="' . $post['imagem'] . '" alt="' . $post['titulo'] . '" />';
-  echo '</picture>';
+  // srcset permite ao navegador escolher medium (300px) no mobile e medium_large/large no desktop
+  echo theme_image($post['imagem'], 'medium_large', array(
+    'alt' => wp_strip_all_tags($post['titulo']),
+    'sizes' => '(max-width: 600px) 100vw, 530px',
+    'width' => 530,
+    'height' => 300,
+  ));
   echo '</a>';
   echo '<header class="c-post__header">';
   echo '<ul class="c-post__categories">';
@@ -316,6 +388,8 @@ function theme_get_slides($args)
 {
   if (!$args) return;
 
+  $args += array('no_found_rows' => true);
+
   $query = new WP_Query($args);
   if ($query->have_posts()) {
     // Verifica se é a página inicial
@@ -326,15 +400,17 @@ function theme_get_slides($args)
 
     echo '<div class="l-page__content ' . $carousel_class . ' js-main-carousel splide">';
     echo '<div class="splide__track"><ul class="splide__list">';
+    $is_first = true;
     while ($query->have_posts()) {
       $query->the_post();
       $custom = array(
         'titulo' => get_the_title(),
-        'imagem' => get_field("imagem"),
+        'imagem' => get_field("imagem", false, false), // ID do anexo
         'imagem_mobile' => get_field("imagem_mobile"),
         'link' => get_field("link"),
       );
-      echo theme_slides_template($custom);
+      echo theme_slides_template($custom, $is_first);
+      $is_first = false;
     }
     echo '</ul></div>';
     echo '</div>';
@@ -343,7 +419,7 @@ function theme_get_slides($args)
 }
 
 //Template para os slides
-function theme_slides_template($custom)
+function theme_slides_template($custom, $is_first = false)
 {
   $html = '<li class="splide__slide"><article class="l-slide">';
   if ($custom["link"]) {
@@ -353,7 +429,14 @@ function theme_slides_template($custom)
   if ($custom['imagem_mobile']) {
     $html .= '<source media="(max-width:600px)" srcset="' . $custom["imagem_mobile"] . '">';
   };
-  $html .= '<img width="1500" height="415" src="' . $custom["imagem"] . '" alt="' . $custom['titulo'] . '" />';
+  // O primeiro slide é o LCP da página: carrega imediatamente e com prioridade alta
+  $html .= theme_image($custom['imagem'], 'full', array(
+    'alt' => wp_strip_all_tags($custom['titulo']),
+    'loading' => $is_first ? 'eager' : 'lazy',
+    'fetchpriority' => $is_first ? 'high' : false,
+    'width' => 1500,
+    'height' => 415,
+  ));
   $html .= '</picture>';
   $html .= '<h2 class="screen-readers-only">' . $custom['titulo'] . '</h2>';
   $html .= '</article>';
@@ -368,6 +451,10 @@ function theme_slides_template($custom)
 //Template para os banners
 function theme_banner_template($custom)
 {
+  if (empty($custom)) {
+    return '';
+  }
+
   $html = "";
   if ($custom["link"]) {
     $html .= '<a target="_blank" rel="nofollow" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-banner">';
@@ -376,12 +463,67 @@ function theme_banner_template($custom)
     $html .= '<h3 class="screen-readers-only">' . $custom['titulo'] . '</h3>';
   }
 
-  $html .= '<img class="lazy" width="380" height="380" data-src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '"/>';
+  $html .= theme_image($custom['imagem'], 'full', array(
+    'alt' => wp_strip_all_tags($custom['titulo']),
+    'sizes' => '(max-width: 600px) 50vw, 320px',
+    'width' => 380,
+    'height' => 380,
+  ));
 
   if ($custom["link"]) {
     $html .= '</a>';
   } else {
     $html .= '</article>';
   }
+  return $html;
+}
+
+// Banners horizontais da home (CPT banners_home), em uma única query
+function theme_get_home_banners($limit = 5)
+{
+  $query = new WP_Query(array(
+    'post_type' => 'banners_home',
+    'post_status' => 'publish',
+    'posts_per_page' => $limit,
+    'no_found_rows' => true,
+    'order' => 'DESC',
+  ));
+
+  $banners = array();
+  foreach ($query->posts as $banner) {
+    $banners[] = array(
+      'titulo' => get_the_title($banner),
+      'imagem' => get_field("imagem", $banner->ID, false), // ID do anexo
+      'link' => get_field("link", $banner->ID),
+    );
+  }
+
+  return $banners;
+}
+
+//Template para os banners horizontais da home
+function theme_home_banner_template($custom)
+{
+  if (empty($custom)) {
+    return '';
+  }
+
+  $html = '';
+  if ($custom["link"]) {
+    $html .= '<a target="_blank" rel="nofollow" href="' . $custom['link'] . '" title="' . $custom['titulo'] . '" class="l-page-home__banner">';
+  } else {
+    $html .= '<article class="l-page-home__banner">';
+    $html .= '<h3 class="screen-readers-only">' . $custom['titulo'] . '</h3>';
+  }
+
+  $html .= theme_image($custom['imagem'], 'full', array(
+    'alt' => wp_strip_all_tags($custom['titulo']),
+    'sizes' => '(max-width: 1000px) 100vw, 1000px',
+    'width' => 1000,
+    'height' => 100,
+  ));
+
+  $html .= $custom["link"] ? '</a>' : '</article>';
+
   return $html;
 }

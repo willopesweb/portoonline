@@ -41,6 +41,38 @@ function theme_css()
 add_action('wp_enqueue_scripts', 'theme_css');
 
 
+// Versão do asset pela data de modificação (cache busting a cada build)
+function theme_asset_version($path)
+{
+  $file = get_template_directory() . '/' . ASSETS_DIR . '/' . $path;
+  return file_exists($file) ? (string) filemtime($file) : null;
+}
+
+// Registra os scripts do tema com defer.
+// Prioridade 20: inc/performance.php esvazia a fila de scripts na prioridade 10.
+function theme_js()
+{
+  $uri = get_template_directory_uri() . '/' . ASSETS_DIR;
+  $defer = ['strategy' => 'defer', 'in_footer' => true];
+
+  wp_enqueue_script('theme-main', $uri . '/js/main.js', [], theme_asset_version('js/main.js'), $defer);
+  wp_enqueue_script('theme-slides', $uri . '/js/slides.js', [], theme_asset_version('js/slides.js'), $defer);
+
+  // AdSense: carregado uma única vez por página (antes era incluído no index e no footer)
+  wp_enqueue_script('google-adsense', 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7379900084732959', [], null, ['strategy' => 'async', 'in_footer' => true]);
+}
+add_action('wp_enqueue_scripts', 'theme_js', 20);
+
+function theme_adsense_crossorigin($tag, $handle)
+{
+  if ($handle === 'google-adsense') {
+    $tag = str_replace(' src=', ' crossorigin="anonymous" src=', $tag);
+  }
+  return $tag;
+}
+add_filter('script_loader_tag', 'theme_adsense_crossorigin', 10, 2);
+
+
 // Tamanho do resumo dos posts
 function theme_custom_excerpt_length($length)
 {

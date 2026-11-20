@@ -40,7 +40,7 @@ function slides_topo_shortcode()
     'post_type' => 'banners_topo',
     'post_status' => 'publish',
     'posts_per_page' => -1,
-    'orderby' => 'rand',
+    'no_found_rows' => true,
     'meta_key' => 'ativo',     // Adiciona a chave do campo personalizado
     'meta_value' => '0',           // Define o valor para buscar (true)
     'meta_compare' => '!=',
@@ -48,6 +48,9 @@ function slides_topo_shortcode()
 
   $query = new WP_Query($args);
   if ($query->have_posts()) {
+    // Embaralha em PHP: ORDER BY RAND() no MySQL é lento e impede cache de query
+    shuffle($query->posts);
+    $is_first = true;
     $carousel = ($query->post_count > 1) ?  true : false;
     echo '<div class="l-header__slide' . ($carousel ? ' c-carousel js-header-carousel splide' : '') . '">';
     if ($carousel) echo '<div class="splide__track"><ul class="splide__list">';
@@ -55,7 +58,7 @@ function slides_topo_shortcode()
       $query->the_post();
       $custom = array(
         'titulo' => get_the_title(),
-        'imagem' => get_field("imagem"),
+        'imagem' => get_field("imagem", false, false), // ID do anexo
         'imagem_mobile' => get_field("imagem_mobile"),
         'link' => get_field("link"),
       );
@@ -70,7 +73,17 @@ function slides_topo_shortcode()
       if ($custom['imagem_mobile']) {
         echo '<source media="(max-width:600px)" srcset="' . $custom["imagem_mobile"] . '">';
       };
-      echo '<img class="lazy" width="600" height="100" data-src="' . $custom['imagem'] . '" alt="' . $custom['titulo'] . '"/>';
+      // Fica sempre acima da dobra: o primeiro carrega imediatamente
+      echo theme_image($custom['imagem'], 'full', array(
+        'alt' => wp_strip_all_tags($custom['titulo']),
+        'loading' => $is_first ? 'eager' : 'lazy',
+        // Evita que o WP marque este banner como fetchpriority="high"; a prioridade fica para o LCP (slide/destaque)
+        'fetchpriority' => 'auto',
+        'sizes' => '(max-width: 600px) 100vw, 600px',
+        'width' => 600,
+        'height' => 100,
+      ));
+      $is_first = false;
       echo '</picture>';
 
 

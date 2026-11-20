@@ -52,7 +52,7 @@ global $wp_query;
 					}
 					$post = array(
 						'titulo' => resume_text(get_the_title(), 80),
-						'imagem' => get_the_post_thumbnail_url(),
+						'imagem' => get_post_thumbnail_id(),
 						'data' => get_the_date(),
 						'descricao' => get_the_excerpt(),
 						'categoria' => array($category_name, $category_link),

@@ -22,6 +22,7 @@ $banner_query = new WP_Query(array(
 	'post_type' => $post_type,
 	'post_status' => 'publish',
 	'posts_per_page' => -1,
+	'no_found_rows' => true,
 	'meta_key' => 'ativo',
 	'meta_value' => '0',
 	'meta_compare' => '!=',
@@ -32,7 +33,7 @@ if ($banner_query->have_posts()) {
 		$banner_query->the_post();
 		$custom = array(
 			'titulo' => get_the_title(),
-			'imagem' => get_field("imagem"),
+			'imagem' => get_field("imagem", false, false), // ID do anexo
 			'link' => get_field("link"),
 			'exibir_ate' => get_field("exibir_ate"),
 		);
@@ -103,7 +104,7 @@ if ($banner_query->have_posts()) {
 				}
 				$post = array(
 					'titulo' => resume_text(get_the_title(), 80),
-					'imagem' => get_the_post_thumbnail_url(),
+					'imagem' => get_post_thumbnail_id(),
 					'video' => get_field('video_youtube'),
 					'data' => get_the_date(),
 					'descricao' => has_category('obituario-porto-ferreira') ? apply_filters('the_content', get_the_content()) : get_the_excerpt(),

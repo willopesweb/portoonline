@@ -38,7 +38,8 @@ function videos_shortcode()
   $args = array(
     'post_type' => 'video',
     'post_status' => 'publish',
-    'posts_per_page' => -1
+    'posts_per_page' => -1,
+    'no_found_rows' => true
   );
   $query = new WP_Query($args);
   if ($query->have_posts()) {
